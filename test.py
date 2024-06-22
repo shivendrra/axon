@@ -1,8 +1,7 @@
-def shape(arr):
-  if isinstance(arr, list):
-    return [len(arr),] + shape(arr[0])
-  else:
-    return []
+import axon
 
 a = [[1, 4, 5], [1, 4, 5]]
-print(shape(a))
+a = axon.array(a)
+c = a / a
+print(a)
+print(c)
