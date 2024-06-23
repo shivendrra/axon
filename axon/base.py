@@ -274,3 +274,55 @@ class array:
       else:
         return gelu(data)
     return array(_apply(self.data), dtype=array.float32)
+  
+  def mean(self, axis:Optional[int]=None, dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]=None, keepdims:bool=False) -> list[float]:
+    if axis is None:
+      flat_array = self.flatten()
+      mean_value = sum(flat_array) / len(flat_array)
+      if keepdims:
+        return [[mean_value]]
+      return mean_value
+    else:
+      if axis==0:
+        mean_value = [sum(row[i] for row in self.data) / len(self.data) for i in range(len(self.data[0]))]
+        if keepdims:
+          return [mean_value]
+        return mean_value
+      elif axis == 1:
+        mean_value = [sum(row) / len(row) for row in self.data]
+        if keepdims:
+          return [[mean] for mean in mean_value]
+        return mean_value
+  
+  def var(self, axis:Optional[int]=None, ddof:int=0, dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]=None, keepdims:bool=False) -> list[float]:
+    def subtract_mean(arr, mean):
+      if isinstance(arr[0], list):
+        return [subtract_mean(sublist, mean) for sublist in arr]
+      else:
+        return [x - mean for x in arr]
+    
+    if axis is None:
+      flat_array = self.flatten()
+      mean_value = self.mean(axis=axis)
+      variance = sum((x - mean_value) ** 2 for x in flat_array) / (len(flat_array) - ddof)
+      if keepdims:
+        return [[variance]]
+      return variance
+    else:
+      mean_values = self.mean(axis=axis)
+      if axis == 0:
+        variance = [sum((row[i] - mean_values[i]) ** 2 for row in self.data) / (len(self.data) - ddof) for i in range(len(mean_values))]
+        if keepdims:
+          return [variance]
+        return variance
+      elif axis == 1:
+        variance = [sum((x - mean_values[i]) ** 2 for x in row) / (len(row) - ddof) for i, row in enumerate(self.data)]
+        if keepdims:
+          return [[v] for v in variance]
+        return variance
+
+  def std(self, axis:Optional[int]=None, ddof:int=0, dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]=None, keepdims:bool=False) -> list[float]:
+    variance = self.var(axis=axis, ddof=ddof, dtype=dtype, keepdims=keepdims)
+    if isinstance(variance, list):
+      return [[math.sqrt(x)] for x in _flatten(variance)] if keepdims else [math.sqrt(x) for x in _flatten(variance)]
+    return math.sqrt(variance)

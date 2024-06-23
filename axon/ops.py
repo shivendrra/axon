@@ -1,6 +1,6 @@
 from .base import array
 from .utils import zeros
-from .helpers.shape import transpose
+from .helpers.shape import _flatten
 from typing import *
 
 def get_element(data, indices):
@@ -80,3 +80,15 @@ def concat(data: tuple[array, array], axis: int=0) -> array:
   
   insert_data(new_data, data, axis)
   return array(new_data, dtype=data[0].dtype)
+  
+def mean(data, axis:Optional[int]=None, dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]=None, keepdims:bool=False) -> Union[list, float, int]:
+  data = data if isinstance(data, array) else array(data, dtype)
+  return data.mean(axis=axis, dtype=dtype, keepdims=keepdims)
+
+def var(data, axis:Optional[int]=None, ddof:int=0, dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]=None, keepdims:bool=False) -> Union[list, float, int]:
+  data = data if isinstance(data, array) else array(data, dtype)
+  return data.var(axis=axis, ddof=ddof, dtype=dtype, keepdims=keepdims)
+
+def std(data, axis:Optional[int]=None, ddof:int=0, dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]=None, keepdims:bool=False) -> Union[list, float, int]:
+  data = data if isinstance(data, array) else array(data, dtype)
+  return data.std(axis=axis, ddof=ddof, dtype=dtype, keepdims=keepdims)
