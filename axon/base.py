@@ -1,7 +1,7 @@
 from typing import *
 from .utils import zeros
 from .helpers.shape import get_shape, _flatten, transpose, _re_transpose, broadcasted_shape, broadcasted_array, reshape
-from .helpers.functionals import *
+from .helpers.functionals import tanh, sigmoid, gelu, relu
 from .helpers.dtype import *
 from copy import deepcopy
 import math
@@ -33,7 +33,7 @@ class array:
   
   def __repr__(self) -> str:
     data_str = ',\n\t'.join([str(row) for row in self.data])
-    return f"array({data_str}, dtype={self.dtype})" if self.dtype is not None else f"array({data_str})"
+    return f"array({data_str}, dtype={self.dtype})"
   
   def __getitem__(self, idx:int):
     return self.data[idx]
@@ -124,27 +124,39 @@ class array:
 
   def __add__(self, other:List["array"]) -> List["array"]:
     other = other if isinstance(other, array) else array(other)
-    assert self.shape == other.shape, "shapes are incompatible for operation"
-
     def _add(a, b):
       if isinstance(a, list):
         return [_add(_a, _b) for _a, _b in zip(a, b)]
       else:
         return a + b
     
-    return array(_add(self.data, other.data), dtype=self.dtype)
+    target_shape, requires_broadcasting = broadcasted_shape(self.shape, other.shape)
+    if requires_broadcasting:
+      self = array(broadcasted_array(self.data), target_shape)
+      other = array(broadcasted_array(other.shape), target_shape)
+    
+    if self.shape == other.shape:
+      return array(_add(self.data, other.data), dtype=self.dtype)
+    else:
+      raise ValueError("shapes are incompatible for operation")
 
   def __mul__(self, other:List["array"]) -> List["array"]:
     other = other if isinstance(other, array) else array(other)
-    assert self.shape == other.shape, "shapes are incompatible for operation"
-
     def _mul(a, b):
       if isinstance(a, list):
         return [_mul(_a, _b) for _a, _b in zip(a, b)]
       else:
         return a * b
     
-    return array(_mul(self.data, other.data), dtype=self.dtype)
+    target_shape, requires_broadcasting = broadcasted_shape(self.shape, other.shape)
+    if requires_broadcasting:
+      self = array(broadcasted_array(self.data), target_shape)
+      other = array(broadcasted_array(other.shape), target_shape)
+
+    if self.shape == other.shape:
+      return array(_mul(self.data, other.data), dtype=self.dtype)
+    else:
+      raise ValueError("shapes are incompatible for operation")
   
   def __matmul__(self, other:List["array"]) -> List["array"]:
     other = other if isinstance(other, array) else array(other, dtype=self.dtype)
@@ -166,15 +178,16 @@ class array:
           out[i] = _remul(array(a.data[i]), array(b.data[i]))
         return out
 
-    return array(_remul(self, other), dtype=self.dtype)
+    return array(_remul(self, other), dtype=array.float32)
 
-  def __pow__(self, exp:float) -> List["array"]:
+  def __pow__(self, exp:Union[int, float]) -> List["array"]:
+    assert isinstance(exp, (int, float)), "power exponent is of incompatible datatype"
     def _pow(a):
       if isinstance(a, list):
         return [_pow(_a) for _a in a]
       else:
         return math.pow(a, exp)
-    return array(_pow(self.data), dtype=self.dtype)
+    return array(_pow(self.data), dtype=array.float32)
 
   def __neg__(self) -> List["array"]:
     def _neg(a):
@@ -236,7 +249,7 @@ class array:
         return [_apply(sub_data) for sub_data in data]
       else:
         return relu(data)
-    return array(_apply(self.data), dtype=self.dtype)
+    return array(_apply(self.data), dtype=array.float32)
   
   def tanh(self) -> List["array"]:
     def _apply(data):
@@ -244,7 +257,7 @@ class array:
         return [_apply(sub_data) for sub_data in data]
       else:
         return tanh(data)
-    return array(_apply(self.data), dtype=self.dtype)
+    return array(_apply(self.data), dtype=array.float32)
   
   def sigmoid(self) -> List["array"]:
     def _apply(data):
@@ -252,7 +265,7 @@ class array:
         return [_apply(sub_data) for sub_data in data]
       else:
         return sigmoid(data)
-    return array(_apply(self.data), dtype=self.dtype)
+    return array(_apply(self.data), dtype=array.float32)
   
   def gelu(self) -> List["array"]:
     def _apply(data):
@@ -260,4 +273,4 @@ class array:
         return [_apply(sub_data) for sub_data in data]
       else:
         return gelu(data)
-    return array(_apply(self.data), dtype=self.dtype)
+    return array(_apply(self.data), dtype=array.float32)
