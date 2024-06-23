@@ -1,6 +1,6 @@
 from .base import array
-from .utils.extras import zeros
-from .utils.shape import transpose
+from .utils import zeros
+from .helpers.shape import transpose
 from typing import *
 
 def get_element(data, indices):

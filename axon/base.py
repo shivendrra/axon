@@ -1,8 +1,8 @@
 from typing import *
-from .utils.extras import zeros
-from .utils.shape import get_shape, _flatten, transpose, _re_transpose, broadcasted_shape, broadcasted_array, reshape
-from .utils.functionals import *
-from .utils.dtype import *
+from .utils import zeros
+from .helpers.shape import get_shape, _flatten, transpose, _re_transpose, broadcasted_shape, broadcasted_array, reshape
+from .helpers.functionals import *
+from .helpers.dtype import *
 from copy import deepcopy
 import math
 
