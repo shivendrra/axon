@@ -69,7 +69,7 @@ def broadcasted_array(array, target_shape):
 
   return expand_dims(array, current_shape, target_shape)
 
-def _reshape(data, new_shape):
+def reshape(data, new_shape):
   flat_data = _flatten(data)
   shape_size = _shape_size(new_shape)
   if shape_size != len(flat_data):

@@ -1,6 +1,8 @@
 from typing import *
-from .utils.shape import get_shape, _flatten, transpose, _re_transpose, broadcasted_shape, broadcasted_array, _reshape
-from .dtype import _to_float16, _to_float32, _to_float64, _to_int16, _to_int32, _to_int64, _to_int8
+from .utils.extras import zeros
+from .utils.shape import get_shape, _flatten, transpose, _re_transpose, broadcasted_shape, broadcasted_array, reshape
+from .utils.functionals import *
+from .utils.dtype import *
 from copy import deepcopy
 import math
 
@@ -21,11 +23,11 @@ class array:
   float32 = float32
   float64 = float64
 
-  def __init__(self, *data, dtype=None) -> None:
+  def __init__(self, *data:Union[List["array"], list, int, float], dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]=None) -> None:
     self.data = data[0] if len(data) == 1 and isinstance(data[0], list) else list(data)
     self.shape = self.shape()
     self.ndim = len(self.shape)
-    self.dtype = dtype
+    self.dtype = int64
     if dtype:
       self.data = self._convert_dtype(self.data, dtype)
   
@@ -33,13 +35,13 @@ class array:
     data_str = ',\n\t'.join([str(row) for row in self.data])
     return f"array({data_str}, dtype={self.dtype})" if self.dtype is not None else f"array({data_str})"
   
-  def __getitem__(self, idx):
+  def __getitem__(self, idx:int):
     return self.data[idx]
   
   def __setattr__(self, name: str, value: Any) -> None:
     super().__setattr__(name, value)
   
-  def __setitem__(self, index:int, value: Any) -> None:
+  def __setitem__(self, index:tuple, value: Any) -> None:
     if isinstance(index, tuple):
       data = self.data
       for idx in index[:-1]:
@@ -52,22 +54,22 @@ class array:
     for item in self.data:
       yield item
 
-  def _convert_dtype(self, data, dtype):
+  def _convert_dtype(self, data:List["array"], dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]):
     def convert(data, dtype):
       if dtype == 'int8':
-        return [_to_int8(val) for val in data]
+        return [to_int8(val) for val in data]
       elif dtype == 'int16':
-        return [_to_int16(val) for val in data]
+        return [to_int16(val) for val in data]
       elif dtype == 'int32':
-        return [_to_int32(val) for val in data]
-      elif dtype == 'int64':
-        return [_to_int64(val) for val in data]
+        return [to_int32(val) for val in data]
+      elif dtype == 'int64' or dtype == 'long':
+        return [to_int64(val) for val in data]
       elif dtype == 'float16':
-        return [_to_float16(val) for val in data]
+        return [to_float16(val) for val in data]
       elif dtype == 'float32':
-        return [_to_float32(val) for val in data]
-      elif dtype == 'float64':
-        return [_to_float64(val) for val in data]
+        return [to_float32(val) for val in data]
+      elif dtype == 'float64' or dtype == 'double':
+        return [to_float64(val) for val in data]
       else:
         raise ValueError("Unsupported dtype")
     
@@ -76,15 +78,22 @@ class array:
     else:
       return convert([data], dtype)[0]
   
-  def astype(self, dtype):
+  def astype(self, dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]):
     new_data = self._convert_dtype(self.data, dtype)
     return array(new_data, dtype=dtype)
   
   def tolist(self) -> list:
     return self.data
   
-  def copy(self):
+  def copy(self) -> List["array"]:
     return array(deepcopy(self.data), dtype=self.dtype)
+  
+  def view(self, dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]=None) -> List["array"]:
+    new_array = array(self.data)
+    if dtype is not None:
+      new_array.data = self._convert_dtype(new_array.data, dtype)
+      new_array.dtype = dtype
+    return new_array
   
   def shape(self) -> list:
     return get_shape(self.data)
@@ -111,7 +120,7 @@ class array:
 
   def reshape(self, new_shape:tuple) -> List["array"]:
     new_shape = new_shape if isinstance(new_shape, tuple) else tuple(new_shape,)
-    return array(_reshape(self.data, new_shape), dtype=self.dtype)
+    return array(reshape(self.data, new_shape), dtype=self.dtype)
 
   def __add__(self, other:List["array"]) -> List["array"]:
     other = other if isinstance(other, array) else array(other)
@@ -137,6 +146,28 @@ class array:
     
     return array(_mul(self.data, other.data), dtype=self.dtype)
   
+  def __matmul__(self, other:List["array"]) -> List["array"]:
+    other = other if isinstance(other, array) else array(other, dtype=self.dtype)
+    if self.shape[-1] != other.shape[-2]:
+      raise ValueError("Matrices have incompatible dimensions for matmul")
+
+    def _remul(a, b):
+      if len(a.shape) == 2 and len(b.shape) == 2:
+        out = zeros((len(a.data), len(b.data[0])))
+        b_t = transpose(b.data)
+        for i in range(len(a.data)):
+          for j in range(len(b_t)):
+            out[i][j] = sum(a.data[i][k] * b_t[j][k] for k in range(len(a.data[0])))
+        return out
+      else:
+        out_shape = a.shape[:-1] + (b.shape[-1],)
+        out = zeros(out_shape)
+        for i in range(len(a.data)):
+          out[i] = _remul(array(a.data[i]), array(b.data[i]))
+        return out
+
+    return array(_remul(self, other), dtype=self.dtype)
+
   def __pow__(self, exp:float) -> List["array"]:
     def _pow(a):
       if isinstance(a, list):
@@ -198,3 +229,35 @@ class array:
       return array(broadcasted_array(other.data, new_shape), dtype=self.dtype)
     else:
       return None
+  
+  def relu(self) -> List["array"]:
+    def _apply(data):
+      if isinstance(data, list):
+        return [_apply(sub_data) for sub_data in data]
+      else:
+        return relu(data)
+    return array(_apply(self.data), dtype=self.dtype)
+  
+  def tanh(self) -> List["array"]:
+    def _apply(data):
+      if isinstance(data, list):
+        return [_apply(sub_data) for sub_data in data]
+      else:
+        return tanh(data)
+    return array(_apply(self.data), dtype=self.dtype)
+  
+  def sigmoid(self) -> List["array"]:
+    def _apply(data):
+      if isinstance(data, list):
+        return [_apply(sub_data) for sub_data in data]
+      else:
+        return sigmoid(data)
+    return array(_apply(self.data), dtype=self.dtype)
+  
+  def gelu(self) -> List["array"]:
+    def _apply(data):
+      if isinstance(data, list):
+        return [_apply(sub_data) for sub_data in data]
+      else:
+        return gelu(data)
+    return array(_apply(self.data), dtype=self.dtype)

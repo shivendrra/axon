@@ -1,7 +1,8 @@
-import axon as ax
+import axon
 
 a = [[1, 4, 5], [1, 4, 5]]
-a = ax.array(a, dtype=ax.int8)
-c = a + a
-print(a)
+a = axon.array(a, dtype=axon.int64)
+c = a @ a.T()
+d = c.sum()
 print(c)
+print(d)

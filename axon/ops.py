@@ -1,48 +1,29 @@
 from .base import array
 from .utils.extras import zeros
 from .utils.shape import transpose
+from typing import *
 
 def get_element(data, indices):
   for idx in indices:
     data = data[idx]
   return data
 
-def matmul(a, b):
-  a = a if isinstance(a, array) else array(a)
-  b = b if isinstance(b, array) else array(b)
-  if a.shape[-1] != b.shape[-2]:
-    raise ValueError("Matrices have incompatible dimensions for matmul")
+def matmul(a:list, b:list) -> array:
+  return a @ b
 
-  def _remul(a, b):
-    if len(a.shape) == 2 and len(b.shape) == 2:
-      out = zeros((len(a.data), len(b.data[0])))
-      b_t = transpose(b.data)
-      for i in range(len(a.data)):
-        for j in range(len(b_t)):
-          out[i][j] = sum(a.data[i][k] * b_t[j][k] for k in range(len(a.data[0])))
-      return out
-    else:
-      out_shape = a.shape[:-1] + (b.shape[-1],)
-      out = zeros(out_shape)
-      for i in range(len(a.data)):
-        out[i] = _remul(array(a.data[i]), array(b.data[i]))
-      return out
-
-  return array(_remul(a, b))
-
-def stack(arr: tuple, axis: int=0) -> array:
-  if not arr:
+def stack(data: tuple[array, array], axis: int=0) -> array:
+  if not data:
     raise ValueError("Need atleast one array to stack")
   
   # shape checking
-  base_shape = arr[0].shape
-  for arr in arr:
-    if arr.shape != base_shape:
+  base_shape = data[0].shape
+  for d in data:
+    if d.shape != base_shape:
       raise ValueError("All inputs must be of same shape & size!")
   
   # new shape after stacking & initilization
   new_shape = list(base_shape[:])
-  new_shape.insert(axis, len(array))
+  new_shape.insert(axis, len(data))
   new_data = zeros(new_shape)
 
   def insert_data(new_data, arrays, axis, indices=[]):
@@ -58,21 +39,22 @@ def stack(arr: tuple, axis: int=0) -> array:
       
     for i in range(new_shape[len(indices)]):
       insert_data(new_data, arrays, axis, indices + [i])
-    
-  return array(insert_data(new_data, arr, axis))
+  
+  insert_data(new_data, data, axis)
+  return array(new_data, dtype=data[0].dtype)
 
-def concat(arr: tuple, axis: int=0) -> array:
-  if not arr:
+def concat(data: tuple[array, array], axis: int=0) -> array:
+  if not data:
     raise ValueError("Need atleast one array to stack")
   
   # shape checking
-  base_shape = list(array[0].shape) # shape of first array for target array
-  for arr in arr:
+  base_shape = list(data[0].shape) # shape of first array for target array
+  for arr in data:
     if list(arr.shape)[:axis] + list(arr.shape)[axis+1:] != base_shape[:axis] + base_shape[axis+1:]:
       raise ValueError("All input arrays must have the same shape except for the concatenation axis")
   
   new_shape = base_shape[:]
-  new_shape[axis] *= len(array)
+  new_shape[axis] *= len(data)
   new_data = zeros(new_shape)
 
   def set_element(data, indices, value):
@@ -96,4 +78,5 @@ def concat(arr: tuple, axis: int=0) -> array:
     for i in range(new_shape[len(indices)]):
       insert_data(new_data, arrays, axis, indices + [i])
   
-  return array(insert_data(new_data, arr, axis))
+  insert_data(new_data, data, axis)
+  return array(new_data, dtype=data[0].dtype)
