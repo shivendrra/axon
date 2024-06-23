@@ -3,6 +3,8 @@
 #include <math.h>
 #include <string.h>
 
+#include "helpers/functionals.h"
+
 #define INT8 0
 #define INT16 1
 #define INT32 2
@@ -128,4 +130,56 @@ double array_std(array *arr) {
   double mean = array_mean(arr);
   double var = array_var(arr, mean);
   return sqrt(var);
+}
+
+array *tanh(array *arr);
+
+void apply_tanh_recursive(double *data, int *shape, int ndim, int current_dim, double *result) {
+  if (current_dim == ndim) {
+    *result = tanh_function(*data);
+  } else {
+    int size = shape[current_dim];
+    for (int i = 0; i < size; ++i) {
+      apply_tanh_recursive(data + i * shape[current_dim + 1], shape, ndim, current_dim + 1, result + i * shape[current_dim + 1]);
+    }
+  }
+}
+
+array *sigmoid(array *arr) {
+  int total_size = 1;
+  for (int i = 0; i < arr->ndim; ++i) {
+    total_size *= arr->shape[i];
+  }
+
+  double *result_data = (double *)malloc(total_size * sizeof(double));
+  apply_sigmoid_recursive(arr->data, arr->shape, arr->ndim, 0, result_data);
+
+  array *result = create_array(result_data, arr->shape, arr->ndim);
+  return result;
+}
+
+array *sigmoid(array *arr);
+
+void apply_sigmoid_recursive(double *data, int *shape, int ndim, int current_dim, double *result) {
+  if (current_dim == ndim) {
+    *result = tanh_function(*data);
+  } else {
+    int size = shape[current_dim];
+    for (int i = 0; i < size; ++i) {
+      apply_sigmoid_recursive(data + i * shape[current_dim + 1], shape, ndim, current_dim + 1, result + i * shape[current_dim + 1]);
+    }
+  }
+}
+
+array *sigmoid(array *arr) {
+  int total_size = 1;
+  for (int i = 0; i < arr->ndim; ++i) {
+    total_size *= arr->shape[i];
+  }
+
+  double *result_data = (double *)malloc(total_size * sizeof(double));
+  apply_sigmoid_recursive(arr->data, arr->shape, arr->ndim, 0, result_data);
+
+  array *result = create_array(result_data, arr->shape, arr->ndim);
+  return result;
 }
