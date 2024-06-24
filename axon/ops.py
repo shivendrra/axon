@@ -1,5 +1,5 @@
 from .base import array
-from .utils import zeros
+from .helpers.utils import _zeros
 from typing import *
 
 def get_element(data, indices):
@@ -23,7 +23,7 @@ def stack(data: tuple[array, array], axis: int=0) -> array:
   # new shape after stacking & initilization
   new_shape = list(base_shape[:])
   new_shape.insert(axis, len(data))
-  new_data = zeros(new_shape).data
+  new_data = _zeros(new_shape)
 
   def insert_data(new_data, arrays, axis, indices=[]):
     if len(indices) == len(new_shape):
@@ -54,7 +54,7 @@ def concat(data: tuple[array, array], axis: int=0) -> array:
   
   new_shape = base_shape[:]
   new_shape[axis] *= len(data)
-  new_data = zeros(new_shape).data
+  new_data = _zeros(new_shape)
 
   def set_element(data, indices, value):
     for idx in indices[:-1]:

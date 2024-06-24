@@ -1,4 +1,5 @@
 from typing import *
+from .helpers.utils import _zeros
 from .helpers.shape import get_shape, _flatten, transpose, _re_transpose, broadcasted_shape, broadcasted_array, reshape
 from .helpers.functionals import tanh, sigmoid, gelu, relu
 from .helpers.dtype import *
@@ -13,11 +14,6 @@ float16 = 'float16'
 float32 = 'float32'
 float64 = 'float64'
 
-def zeros(shape:tuple) -> list:
-  if len(shape) == 1:
-    return [0] * shape[0]
-  return [zeros(shape[1:]) for _ in range(shape[0])]
-
 class array:
   int8 = int8
   int16 = int16
@@ -31,8 +27,8 @@ class array:
     self.data = data[0] if len(data) == 1 and isinstance(data[0], list) else list(data)
     self.shape = self.shape()
     self.ndim = len(self.shape)
-    self.dtype = int64
-    if dtype:
+    self.dtype = array.int32 if dtype is None else dtype
+    if dtype is not None:
       self.data = self._convert_dtype(self.data, dtype)
   
   def __repr__(self) -> str:
@@ -175,7 +171,7 @@ class array:
 
     def _remul(a, b):
       if len(a.shape) == 2 and len(b.shape) == 2:
-        out = zeros((len(a.data), len(b.data[0])))
+        out = _zeros((len(a.data), len(b.data[0])))
         b_t = transpose(b.data)
         for i in range(len(a.data)):
           for j in range(len(b_t)):
@@ -183,7 +179,7 @@ class array:
         return out
       else:
         out_shape = a.shape[:-1] + (b.shape[-1],)
-        out = zeros(out_shape)
+        out = _zeros(out_shape)
         for i in range(len(a.data)):
           out[i] = _remul(array(a.data[i]), array(b.data[i]))
         return out
