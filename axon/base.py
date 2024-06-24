@@ -1,5 +1,4 @@
 from typing import *
-from .utils import zeros
 from .helpers.shape import get_shape, _flatten, transpose, _re_transpose, broadcasted_shape, broadcasted_array, reshape
 from .helpers.functionals import tanh, sigmoid, gelu, relu
 from .helpers.dtype import *
@@ -13,6 +12,11 @@ int64 = 'int64'
 float16 = 'float16'
 float32 = 'float32'
 float64 = 'float64'
+
+def zeros(shape:tuple) -> list:
+  if len(shape) == 1:
+    return [0] * shape[0]
+  return [zeros(shape[1:]) for _ in range(shape[0])]
 
 class array:
   int8 = int8
@@ -35,8 +39,14 @@ class array:
     data_str = ',\n\t'.join([str(row) for row in self.data])
     return f"array({data_str}, dtype={self.dtype})"
   
-  def __getitem__(self, idx:int):
-    return self.data[idx]
+  def __getitem__(self, index:tuple):
+    if isinstance(index, tuple):
+      data = self.data
+      for idx in index[:-1]:
+        data = data[idx]
+      return data[index[-1]]
+    else:
+      return self.data[index]
   
   def __setattr__(self, name: str, value: Any) -> None:
     super().__setattr__(name, value)

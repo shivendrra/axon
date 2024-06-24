@@ -7,9 +7,9 @@ print(a.std(axis=1))
 print(a.std())
 print("----------------")
 
-
-import numpy as np
-
-print(np.std(a.data, axis=0))
-print(np.std(a.data, axis=1))
-print(np.std(a.data))
+print(axon.zeros((2, 5), axon.float16))
+print(axon.ones((2, 5), dtype=axon.float32))
+print(axon.arange(1, 9))
+print(axon.randn(shape=(2, 5), dtype=axon.float16))
+print(axon.zeros_like(a, dtype=axon.float16))
+print(axon.ones_like(a, dtype=axon.int32))

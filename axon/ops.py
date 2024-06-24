@@ -1,6 +1,5 @@
 from .base import array
 from .utils import zeros
-from .helpers.shape import _flatten
 from typing import *
 
 def get_element(data, indices):
@@ -24,7 +23,7 @@ def stack(data: tuple[array, array], axis: int=0) -> array:
   # new shape after stacking & initilization
   new_shape = list(base_shape[:])
   new_shape.insert(axis, len(data))
-  new_data = zeros(new_shape)
+  new_data = zeros(new_shape).data
 
   def insert_data(new_data, arrays, axis, indices=[]):
     if len(indices) == len(new_shape):
@@ -55,7 +54,7 @@ def concat(data: tuple[array, array], axis: int=0) -> array:
   
   new_shape = base_shape[:]
   new_shape[axis] *= len(data)
-  new_data = zeros(new_shape)
+  new_data = zeros(new_shape).data
 
   def set_element(data, indices, value):
     for idx in indices[:-1]:
@@ -80,6 +79,34 @@ def concat(data: tuple[array, array], axis: int=0) -> array:
   
   insert_data(new_data, data, axis)
   return array(new_data, dtype=data[0].dtype)
+
+def split(data, idx:int, axis:Optional[int]=None) -> list:
+  def _get_slices(start_idx, end_idx, data):
+    slices = []
+    for start, end in zip(start_idx, end_idx):
+      slices.append(data[start:end])
+    return slices
+  
+  if isinstance(idx, int):
+    N = idx
+    total_len = len(data) if axis == 0 else len(data[0])
+    if total_len % N != 0:
+      raise ValueError("Array split doesn't results in an equal division")
+    step = total_len // N
+    indices = [i*step for i in range(1, N)]
+  else:
+    indices = idx
+  
+  start_idx = [0] + indices
+  end_idx = indices + [len(data) if axis==0 else len(data)]
+
+  if axis == 0:
+    return _get_slices(start_idx, end_idx, data)
+  else:
+    result = []
+    for row in data:
+      result.append(_get_slices(start_idx, end_idx, row))
+    return [list(col) for col in zip(*result)]
   
 def mean(data, axis:Optional[int]=None, dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]=None, keepdims:bool=False) -> Union[list, float, int]:
   data = data if isinstance(data, array) else array(data, dtype)
