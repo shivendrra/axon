@@ -1,6 +1,6 @@
 from typing import *
 from .helpers.utils import _zeros
-from .helpers.shape import get_shape, _flatten, transpose, _re_transpose, broadcasted_shape, broadcasted_array, reshape
+from .helpers.shape import get_shape, _flatten, transpose, _re_transpose, broadcasted_shape, broadcasted_array, reshape, re_flat
 from .helpers.functionals import tanh, sigmoid, gelu, relu
 from .helpers.dtype import *
 from copy import deepcopy
@@ -33,7 +33,7 @@ class array:
   
   def __repr__(self) -> str:
     data_str = ',\n\t'.join([str(row) for row in self.data])
-    return f"array({data_str}, dtype={self.dtype})"
+    return f"array([{data_str}], dtype={self.dtype})"
   
   def __getitem__(self, index:tuple):
     if isinstance(index, tuple):
@@ -104,7 +104,10 @@ class array:
   def shape(self) -> list:
     return get_shape(self.data)
   
-  def flatten(self) -> list:
+  def flatten(self, start_dim:int=0, end_dim:int=-1) -> list:
+    return re_flat(self.data, start_dim, end_dim)
+  
+  def F(self) -> list:
     return _flatten(self.data)
   
   def numel(self) -> int:

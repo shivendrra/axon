@@ -10,12 +10,12 @@ def _flatten(data):
   else:
     return [data]
 
-def __flatten(input_tensor, start_dim=0, end_dim=-1):
+def re_flat(input_tensor, start_dim=0, end_dim=-1):
   def _recurse_flatten(data, current_dim):
     if current_dim < start_dim:
       return [_recurse_flatten(item, current_dim + 1) for item in data]
     elif start_dim <= current_dim <= end_dim:
-      return __flatten(data)
+      return re_flat(data)
     else:
       return data
   
