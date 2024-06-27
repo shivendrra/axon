@@ -1,19 +1,15 @@
 import axon
 
-a = [[[1, 4, 5], [0, 4, 2]], [[3, 3, -5], [0, -4, 15]]]
-a = axon.array(a, dtype=axon.int64)
+a = axon.array([[[1, 4, 5], [0, 4, 2]], [[1, 4, 5], [0, 4, 2]]], dtype=axon.int32)
+b = axon.array([[[0, -4, 1], [2, 0, -3]], [[-9, -2, 15], [2, -4, 1]]], dtype=axon.int32)
 
-print(a.F())
-print(a.flatten())
-print(a.flatten(0, 1))
-print(a.flatten(0, 1))
-
-# print(a.T())
-# print(a.transpose(0, -1))
-
+print(a.tanh()) # output: 1.7950549357115013
+print(a.relu()) # output: 1.7950549357115013
+print(a.sigmoid()) # output: 1.7950549357115013
+print(a.gelu()) # output: 1.7950549357115013
+# print(a.std())
 # print(a.std(axis=0))
 # print(a.std(axis=1))
-# print(a.std())
 # print("----------------")
 
 # print(axon.zeros((2, 5), axon.float16))

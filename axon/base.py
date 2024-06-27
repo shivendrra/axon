@@ -1,6 +1,6 @@
 from typing import *
 from .helpers.utils import _zeros
-from .helpers.shape import get_shape, _flatten, transpose, _re_transpose, broadcasted_shape, broadcasted_array, reshape, re_flat
+from .helpers.shape import get_shape, _flatten, transpose, _re_transpose, broadcasted_shape, broadcasted_array, reshape, re_flat, _unsqueeze, _squeeze
 from .helpers.functionals import tanh, sigmoid, gelu, relu
 from .helpers.dtype import *
 from copy import deepcopy
@@ -32,6 +32,8 @@ class array:
       self.data = self._convert_dtype(self.data, dtype)
   
   def __repr__(self) -> str:
+    if self.ndim == 1:
+      return f"array([{self.data}], dtype={self.dtype})"
     data_str = ',\n\t'.join([str(row) for row in self.data])
     return f"array([{data_str}], dtype={self.dtype})"
   
@@ -138,11 +140,11 @@ class array:
         return [_add(_a, _b) for _a, _b in zip(a, b)]
       else:
         return a + b
-    
+
     target_shape, requires_broadcasting = broadcasted_shape(self.shape, other.shape)
     if requires_broadcasting:
-      self = array(broadcasted_array(self.data), target_shape)
-      other = array(broadcasted_array(other.shape), target_shape)
+      self = array(broadcasted_array(self.data, target_shape), dtype=self.dtype)
+      other = array(broadcasted_array(other.data, target_shape), dtype=other.dtype)
     
     if self.shape == other.shape:
       return array(_add(self.data, other.data), dtype=self.dtype)
@@ -159,8 +161,8 @@ class array:
     
     target_shape, requires_broadcasting = broadcasted_shape(self.shape, other.shape)
     if requires_broadcasting:
-      self = array(broadcasted_array(self.data), target_shape)
-      other = array(broadcasted_array(other.shape), target_shape)
+      self = array(broadcasted_array(self.data, target_shape), dtype=self.dtype)
+      other = array(broadcasted_array(other.data, target_shape), dtype=other.dtype)
 
     if self.shape == other.shape:
       return array(_mul(self.data, other.data), dtype=self.dtype)
@@ -189,22 +191,6 @@ class array:
 
     return array(_remul(self, other), dtype=array.float32)
 
-  def __pow__(self, exp:Union[int, float]) -> List["array"]:
-    assert isinstance(exp, (int, float)), "power exponent is of incompatible datatype"
-    def _pow(a):
-      if isinstance(a, list):
-        return [_pow(_a) for _a in a]
-      else:
-        return math.pow(a, exp)
-    return array(_pow(self.data), dtype=array.float32)
-
-  def __neg__(self) -> List["array"]:
-    def _neg(a):
-      if isinstance(a, list):
-        return [_neg(_a) for _a in a]
-      return -a
-    return array(_neg(self.data), dtype=self.dtype)
-
   def __sub__(self, other:List["array"]) -> List["array"]:
     return self + (-other)
 
@@ -215,10 +201,29 @@ class array:
     return other * self
   
   def __truediv__(self, other:List["array"]) -> List["array"]:
-    return self * (other ** -1)
+    return self * other ** -1
   
   def rtruediv(self, other:List["array"]) -> List["array"]:
-    return other * (self ** -1)
+    return other * self ** -1
+
+  def __neg__(self) -> List["array"]:
+    def _neg(a):
+      if isinstance(a, list):
+        return [_neg(_a) for _a in a]
+      return -a
+    return array(_neg(self.data), dtype=self.dtype)
+
+  def __pow__(self, pow:Union[int, float], eps:float=1e6) -> List["array"]:
+    assert isinstance(pow, (int, float)), "power exponent is of incompatible datatype"
+
+    def _pow(data, pow):
+      if isinstance(data, list):
+        return [_pow(d, pow) for d in data]
+      if data == 0:
+        data = eps
+      return math.pow(data, pow)
+
+    return array(_pow(self.data, pow), dtype=array.float32)
 
   def sum(self, axis:int=None, keepdim:bool=False) -> List["array"]:
     def _re_sum(data, axis):
@@ -286,7 +291,7 @@ class array:
   
   def mean(self, axis:Optional[int]=None, dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]=None, keepdims:bool=False) -> list[float]:
     if axis is None:
-      flat_array = self.flatten()
+      flat_array = self.F()
       mean_value = sum(flat_array) / len(flat_array)
       if keepdims:
         return [[mean_value]]
@@ -311,7 +316,7 @@ class array:
         return [x - mean for x in arr]
     
     if axis is None:
-      flat_array = self.flatten()
+      flat_array = self.F()
       mean_value = self.mean(axis=axis)
       variance = sum((x - mean_value) ** 2 for x in flat_array) / (len(flat_array) - ddof)
       if keepdims:
@@ -335,3 +340,12 @@ class array:
     if isinstance(variance, list):
       return [[math.sqrt(x)] for x in _flatten(variance)] if keepdims else [math.sqrt(x) for x in _flatten(variance)]
     return math.sqrt(variance)
+  
+  def unsqueeze(self, dim:int=0):
+    return array(_unsqueeze(self.data, dim), dtype=self.dtype)
+  
+  def squeeze(self, dim:int=0):
+    if dim is not None and (dim<0 or dim>=self.ndim):
+      raise IndexError(f"Dimension out of range (expected to be in range of {self.ndim} dimensions)")
+
+    return array(_squeeze(self.data, dim), dtype=self.dtype)

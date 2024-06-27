@@ -15,7 +15,7 @@ def re_flat(input_tensor, start_dim=0, end_dim=-1):
     if current_dim < start_dim:
       return [_recurse_flatten(item, current_dim + 1) for item in data]
     elif start_dim <= current_dim <= end_dim:
-      return re_flat(data)
+      return _flatten(data)
     else:
       return data
   
@@ -47,6 +47,26 @@ def broadcasted_shape(shape1, shape2):
       raise ValueError(f"Shapes {shape1} and {shape2} are not compatible for broadcasting")
     res_shape.append(max(dim1, dim2))
   return res_shape, True
+
+def _unsqueeze(data, dim=0):
+  if dim == 0:
+    return [item for sublist in data for item in _unsqueeze(sublist)] if isinstance(data, list) else [data]
+  else:
+    if isinstance(data, list):
+      return [_unsqueeze(d, dim-1) for d in data]
+    return [data]
+
+def _squeeze(data, dim):
+  if dim is None:
+    if isinstance(data, list):
+      squeezed = [_squeeze(d, None) for d in data]
+      return squeezed if len(squeezed) > 1 else squeezed[0]
+    return data
+  if isinstance(data, list):
+    if dim == 0:
+      return data[0] if len(data) == 1 else data
+    return [_squeeze(d, dim - 1) for d in data]
+  return data
 
 def broadcasted_array(array, target_shape):
   current_shape = get_shape(array)
