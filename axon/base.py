@@ -1,6 +1,6 @@
 from typing import *
 from .helpers.utils import _zeros
-from .helpers.shape import get_shape, _flatten, transpose, _re_transpose, broadcasted_shape, broadcasted_array, reshape, re_flat, _unsqueeze, _squeeze
+from .helpers.shape import get_shape, _flatten, broadcasted_shape, broadcasted_array, reshape, re_flat, _unsqueeze, _squeeze, mean_axis
 from .helpers.functionals import tanh, sigmoid, gelu, relu
 from .helpers.dtype import *
 from copy import deepcopy
@@ -122,9 +122,15 @@ class array:
     return tuple(get_shape(self.data))
   
   def T(self):
-    return array(transpose(self.data), dtype=self.dtype)
+    return list(map(list, zip(*self.data)))
   
   def transpose(self, dim0:int, dim1:int):
+    def _re_transpose(data, dim0, dim1, ndim, depth=0):
+      if depth == ndim - 2:
+        return [list(row) for row in zip(*data)]
+      else:
+        return [_re_transpose(sub_data, dim0, dim1, ndim, depth+1) for sub_data in data]
+
     if dim0 >= self.ndim or dim1 >= self.ndim:
       raise ValueError("Transpose dimensions out of range")
     return array(_re_transpose(self.data, dim0, dim1, self.ndim), dtype=self.dtype)
@@ -177,7 +183,7 @@ class array:
     def _remul(a, b):
       if len(a.shape) == 2 and len(b.shape) == 2:
         out = _zeros((len(a.data), len(b.data[0])))
-        b_t = transpose(b.data)
+        b_t = b.T()
         for i in range(len(a.data)):
           for j in range(len(b_t)):
             out[i][j] = sum(a.data[i][k] * b_t[j][k] for k in range(len(a.data[0])))
@@ -288,58 +294,52 @@ class array:
       else:
         return gelu(data)
     return array(_apply(self.data), dtype=array.float32)
-  
+
   def mean(self, axis:Optional[int]=None, dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]=None, keepdims:bool=False) -> list[float]:
     if axis is None:
       flat_array = self.F()
-      mean_value = sum(flat_array) / len(flat_array)
+      mean_val = sum(flat_array) / len(flat_array)
       if keepdims:
-        return [[mean_value]]
-      return mean_value
+        return [[mean_val]]
+      return mean_val
     else:
-      if axis==0:
-        mean_value = [sum(row[i] for row in self.data) / len(self.data) for i in range(len(self.data[0]))]
-        if keepdims:
-          return [mean_value]
-        return mean_value
-      elif axis == 1:
-        mean_value = [sum(row) / len(row) for row in self.data]
-        if keepdims:
-          return [[mean] for mean in mean_value]
-        return mean_value
-  
+      return mean_axis(self.data, axis, keepdims)
+
   def var(self, axis:Optional[int]=None, ddof:int=0, dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]=None, keepdims:bool=False) -> list[float]:
-    def subtract_mean(arr, mean):
-      if isinstance(arr[0], list):
-        return [subtract_mean(sublist, mean) for sublist in arr]
-      else:
-        return [x - mean for x in arr]
-    
+    def var_axis(data, mean_values, axis, ddof, keepdims):
+        if axis == 0:
+            transposed = list(map(list, zip(*data)))
+            if all(isinstance(i, list) for i in transposed[0]):
+                transposed = [list(map(list, zip(*d))) for d in transposed]
+            variance = [var_axis(d, mean_values[i], axis - 1, ddof, keepdims) if isinstance(d[0], list) else sum((x - mean_values[i]) ** 2 for x in d) / (len(d) - ddof) for i, d in enumerate(transposed)]
+        else:
+            variance = [var_axis(d, mean_values[i], axis - 1, ddof, keepdims) if isinstance(d[0], list) else sum((x - mean_values[i]) ** 2 for x in d) / (len(d) - ddof) for i, d in enumerate(data)]
+        if keepdims:
+            variance = [variance]
+        return variance
+
     if axis is None:
-      flat_array = self.F()
-      mean_value = self.mean(axis=axis)
-      variance = sum((x - mean_value) ** 2 for x in flat_array) / (len(flat_array) - ddof)
-      if keepdims:
-        return [[variance]]
-      return variance
+        flat_array = _flatten(self.data)
+        mean_value = sum(flat_array) / len(flat_array)
+        variance = sum((x - mean_value) ** 2 for x in flat_array) / (len(flat_array) - ddof)
+        if keepdims:
+            return [[variance]]
+        return variance
     else:
-      mean_values = self.mean(axis=axis)
-      if axis == 0:
-        variance = [sum((row[i] - mean_values[i]) ** 2 for row in self.data) / (len(self.data) - ddof) for i in range(len(mean_values))]
-        if keepdims:
-          return [variance]
-        return variance
-      elif axis == 1:
-        variance = [sum((x - mean_values[i]) ** 2 for x in row) / (len(row) - ddof) for i, row in enumerate(self.data)]
-        if keepdims:
-          return [[v] for v in variance]
-        return variance
+        mean_values = self.mean(axis=axis)
+        return var_axis(self.data, mean_values, axis, ddof, keepdims)
+
 
   def std(self, axis:Optional[int]=None, ddof:int=0, dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]=None, keepdims:bool=False) -> list[float]:
     variance = self.var(axis=axis, ddof=ddof, dtype=dtype, keepdims=keepdims)
-    if isinstance(variance, list):
-      return [[math.sqrt(x)] for x in _flatten(variance)] if keepdims else [math.sqrt(x) for x in _flatten(variance)]
-    return math.sqrt(variance)
+    def _std(var):
+      if isinstance(var, list):
+        return [_std(sub) for sub in var]
+      return math.sqrt(var)
+    if keepdims:
+      return [[math.sqrt(x)] for x in _flatten(variance)]
+    else:
+      return _std(variance)
   
   def unsqueeze(self, dim:int=0):
     return array(_unsqueeze(self.data, dim), dtype=self.dtype)

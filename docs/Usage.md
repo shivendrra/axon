@@ -102,8 +102,8 @@ a = [[[1, 4, 5], [0, 4, 2]], [[1, 4, 5], [0, 4, 2]]]
 a = axon.array(a, dtype=axon.int32)
 
 print(a.mean()) # output: 2.6666666666666665
-print(a.mean(axis=0)) # output: 
-print(a.mean(axis=1)) # output: 
+print(a.mean(axis=0)) # output: [[1.0, 4.0, 5.0], [0.0, 4.0, 2.0]]
+print(a.mean(axis=1)) # output: [[0.5, 4.0, 3.5], [0.5, 4.0, 3.5]]
 ```
 
 #### Variance:
@@ -114,8 +114,8 @@ a = [[[1, 4, 5], [0, 4, 2]], [[1, 4, 5], [0, 4, 2]]]
 a = axon.array(a, dtype=axon.int32)
 
 print(a.var()) # output: 3.222222222222222
-print(a.var(axis=0))
-print(a.var(axis=1)) # output: 
+print(a.var(axis=0)) # output: [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+print(a.var(axis=1)) # output: [[0.25, 0.0, 2.25], [0.25, 0.0, 2.25]]
 ```
 
 #### Standard Deviation:
@@ -126,8 +126,8 @@ a = [[[1, 4, 5], [0, 4, 2]], [[1, 4, 5], [0, 4, 2]]]
 a = axon.array(a, dtype=axon.int32)
 
 print(a.std()) # output: 1.7950549357115013
-print(a.std(axis=0)) # output: 
-print(a.std(axis=1)) # output: 
+print(a.std(axis=0)) # output: [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+print(a.std(axis=1)) # output: [[0.5, 0.0, 1.5], [0.5, 0.0, 1.5]]
 ```
 
 #### Activations:

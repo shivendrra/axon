@@ -22,16 +22,19 @@ def re_flat(input_tensor, start_dim=0, end_dim=-1):
   if end_dim == -1:
     end_dim = len(input_tensor) - 1
 
-  return [_recurse_flatten(input_tensor, 0)]
+  return _recurse_flatten(input_tensor, 0)
 
-def transpose(array):
-  return list(map(list, zip(*array)))
-
-def _re_transpose(data, dim0, dim1, ndim, depth=0):
-  if depth == ndim - 2:
-    return [list(row) for row in zip(*data)]
+def mean_axis(data, axis, keepdims):
+  if axis == 0:
+    transposed = list(map(list, zip(*data)))
+    if all(isinstance(i, list) for i in transposed[0]):
+      transposed = [list(map(list, zip(*d))) for d in transposed]
+    mean_vals = [mean_axis(d, axis - 1, keepdims) if isinstance(d[0], list) else sum(d) / len(d) for d in transposed]
   else:
-    return [_re_transpose(sub_data, dim0, dim1, ndim, depth+1) for sub_data in data]
+    mean_vals = [mean_axis(d, axis - 1, keepdims) if isinstance(d[0], list) else sum(d) / len(d) for d in data]
+  if keepdims:
+    mean_vals = [mean_vals]
+  return mean_vals
 
 def broadcasted_shape(shape1, shape2):
   res_shape = []
