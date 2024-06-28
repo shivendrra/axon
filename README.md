@@ -59,7 +59,7 @@ Matrix Multiplication:
 anyway, prefer documentation for detailed usage guide:
 
 1. [axon.doc](https://github.com/shivendrra/axon/blob/main/docs/axon.md): for development purpose
-2. [Usage.doc](https://github.com/shivendrra/axon/blob/main/docs/Usage.md): for using it like numpy
+2. [usage.doc](https://github.com/shivendrra/axon/blob/main/docs/usage.md): for using it like numpy
 
 ## Forking the Repository
 
