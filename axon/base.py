@@ -2,7 +2,8 @@ from typing import *
 from .helpers.utils import _zeros
 from .helpers.shape import get_shape, _flatten, broadcasted_shape, broadcasted_array, reshape, re_flat, _unsqueeze, _squeeze, mean_axis
 from .helpers.functionals import tanh, sigmoid, gelu, relu
-from .helpers.dtype import *
+from .dtypes.dtype import *
+from .dtypes.convert import handle_conversion, convert_dtype
 from copy import deepcopy
 import math
 
@@ -10,18 +11,20 @@ int8 = 'int8'
 int16 = 'int16'
 int32 = 'int32'
 int64 = 'int64'
+long = 'long'
 float16 = 'float16'
 float32 = 'float32'
 float64 = 'float64'
+double = 'double'
 
 class array:
   int8 = int8
   int16 = int16
   int32 = int32
-  int64 = int64
+  int64 = int64 or long
   float16 = float16
   float32 = float32
-  float64 = float64
+  float64 = float64 or double
 
   def __init__(self, *data:Union[List["array"], list, int, float], dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]=None) -> None:
     self.data = data[0] if len(data) == 1 and isinstance(data[0], list) else list(data)
@@ -63,31 +66,10 @@ class array:
       yield item
 
   def _convert_dtype(self, data:List["array"], dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]):
-    def convert(data, dtype):
-      if dtype == 'int8':
-        return [to_int8(val) for val in data]
-      elif dtype == 'int16':
-        return [to_int16(val) for val in data]
-      elif dtype == 'int32':
-        return [to_int32(val) for val in data]
-      elif dtype == 'int64' or dtype == 'long':
-        return [to_int64(val) for val in data]
-      elif dtype == 'float16':
-        return [to_float16(val) for val in data]
-      elif dtype == 'float32':
-        return [to_float32(val) for val in data]
-      elif dtype == 'float64' or dtype == 'double':
-        return [to_float64(val) for val in data]
-      else:
-        raise ValueError("Unsupported dtype")
-    
-    if isinstance(data, list):
-      return [self._convert_dtype(item, dtype) if isinstance(item, list) else convert([item], dtype)[0] for item in data]
-    else:
-      return convert([data], dtype)[0]
+    return handle_conversion(data, dtype)
   
-  def astype(self, dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]):
-    new_data = self._convert_dtype(self.data, dtype)
+  def astype(self, dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]) -> List["array"]:
+    new_data = handle_conversion(self.data, dtype)
     return array(new_data, dtype=dtype)
   
   def tolist(self) -> list:
@@ -295,7 +277,7 @@ class array:
         return gelu(data)
     return array(_apply(self.data), dtype=array.float32)
 
-  def mean(self, axis:Optional[int]=None, dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]=None, keepdims:bool=False) -> list[float]:
+  def mean(self, axis:Optional[int]=None, keepdims:bool=False) -> list[float]:
     if axis is None:
       flat_array = self.F()
       mean_val = sum(flat_array) / len(flat_array)
@@ -305,33 +287,32 @@ class array:
     else:
       return mean_axis(self.data, axis, keepdims)
 
-  def var(self, axis:Optional[int]=None, ddof:int=0, dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]=None, keepdims:bool=False) -> list[float]:
+  def var(self, axis:Optional[int]=None, ddof:int=0, keepdims:bool=False) -> list[float]:
     def var_axis(data, mean_values, axis, ddof, keepdims):
-        if axis == 0:
-            transposed = list(map(list, zip(*data)))
-            if all(isinstance(i, list) for i in transposed[0]):
-                transposed = [list(map(list, zip(*d))) for d in transposed]
-            variance = [var_axis(d, mean_values[i], axis - 1, ddof, keepdims) if isinstance(d[0], list) else sum((x - mean_values[i]) ** 2 for x in d) / (len(d) - ddof) for i, d in enumerate(transposed)]
-        else:
-            variance = [var_axis(d, mean_values[i], axis - 1, ddof, keepdims) if isinstance(d[0], list) else sum((x - mean_values[i]) ** 2 for x in d) / (len(d) - ddof) for i, d in enumerate(data)]
-        if keepdims:
-            variance = [variance]
-        return variance
+      if axis == 0:
+        transposed = list(map(list, zip(*data)))
+        if all(isinstance(i, list) for i in transposed[0]):
+          transposed = [list(map(list, zip(*d))) for d in transposed]
+        variance = [var_axis(d, mean_values[i], axis - 1, ddof, keepdims) if isinstance(d[0], list) else sum((x - mean_values[i]) ** 2 for x in d) / (len(d) - ddof) for i, d in enumerate(transposed)]
+      else:
+        variance = [var_axis(d, mean_values[i], axis - 1, ddof, keepdims) if isinstance(d[0], list) else sum((x - mean_values[i]) ** 2 for x in d) / (len(d) - ddof) for i, d in enumerate(data)]
+      if keepdims:
+        variance = [variance]
+      return variance
 
     if axis is None:
-        flat_array = _flatten(self.data)
-        mean_value = sum(flat_array) / len(flat_array)
-        variance = sum((x - mean_value) ** 2 for x in flat_array) / (len(flat_array) - ddof)
-        if keepdims:
-            return [[variance]]
-        return variance
+      flat_array = _flatten(self.data)
+      mean_value = sum(flat_array) / len(flat_array)
+      variance = sum((x - mean_value) ** 2 for x in flat_array) / (len(flat_array) - ddof)
+      if keepdims:
+        return [[variance]]
+      return variance
     else:
-        mean_values = self.mean(axis=axis)
-        return var_axis(self.data, mean_values, axis, ddof, keepdims)
+      mean_values = self.mean(axis=axis)
+      return var_axis(self.data, mean_values, axis, ddof, keepdims)
 
-
-  def std(self, axis:Optional[int]=None, ddof:int=0, dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]=None, keepdims:bool=False) -> list[float]:
-    variance = self.var(axis=axis, ddof=ddof, dtype=dtype, keepdims=keepdims)
+  def std(self, axis:Optional[int]=None, ddof:int=0, keepdims:bool=False) -> list[float]:
+    variance = self.var(axis=axis, ddof=ddof, keepdims=keepdims)
     def _std(var):
       if isinstance(var, list):
         return [_std(sub) for sub in var]
