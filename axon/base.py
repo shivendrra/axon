@@ -1,6 +1,6 @@
 from typing import *
 from .helpers.utils import _zeros
-from .helpers.shape import get_shape, _flatten, broadcasted_shape, broadcasted_array, reshape, re_flat, _unsqueeze, _squeeze, mean_axis
+from .helpers.shape import get_shape, _flatten, broadcasted_shape, broadcasted_array, reshape, re_flat, _unsqueeze, _squeeze, mean_axis, var_axis
 from .helpers.functionals import tanh, sigmoid, gelu, relu
 from .dtypes.dtype import *
 from .dtypes.convert import handle_conversion, convert_dtype
@@ -288,18 +288,6 @@ class array:
       return mean_axis(self.data, axis, keepdims)
 
   def var(self, axis:Optional[int]=None, ddof:int=0, keepdims:bool=False) -> list[float]:
-    def var_axis(data, mean_values, axis, ddof, keepdims):
-      if axis == 0:
-        transposed = list(map(list, zip(*data)))
-        if all(isinstance(i, list) for i in transposed[0]):
-          transposed = [list(map(list, zip(*d))) for d in transposed]
-        variance = [var_axis(d, mean_values[i], axis - 1, ddof, keepdims) if isinstance(d[0], list) else sum((x - mean_values[i]) ** 2 for x in d) / (len(d) - ddof) for i, d in enumerate(transposed)]
-      else:
-        variance = [var_axis(d, mean_values[i], axis - 1, ddof, keepdims) if isinstance(d[0], list) else sum((x - mean_values[i]) ** 2 for x in d) / (len(d) - ddof) for i, d in enumerate(data)]
-      if keepdims:
-        variance = [variance]
-      return variance
-
     if axis is None:
       flat_array = _flatten(self.data)
       mean_value = sum(flat_array) / len(flat_array)

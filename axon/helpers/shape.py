@@ -4,6 +4,11 @@ def get_shape(arr):
   else:
     return []
 
+def _get_element(data, indices):
+  for idx in indices:
+    data = data[idx]
+  return data
+
 def _flatten(data):
   if isinstance(data, list):
     return [item for sublist in data for item in _flatten(sublist)]
@@ -35,6 +40,18 @@ def mean_axis(data, axis, keepdims):
   if keepdims:
     mean_vals = [mean_vals]
   return mean_vals
+
+def var_axis(data, mean_values, axis, ddof, keepdims):
+  if axis == 0:
+    transposed = list(map(list, zip(*data)))
+    if all(isinstance(i, list) for i in transposed[0]):
+      transposed = [list(map(list, zip(*d))) for d in transposed]
+    variance = [var_axis(d, mean_values[i], axis - 1, ddof, keepdims) if isinstance(d[0], list) else sum((x - mean_values[i]) ** 2 for x in d) / (len(d) - ddof) for i, d in enumerate(transposed)]
+  else:
+    variance = [var_axis(d, mean_values[i], axis - 1, ddof, keepdims) if isinstance(d[0], list) else sum((x - mean_values[i]) ** 2 for x in d) / (len(d) - ddof) for i, d in enumerate(data)]
+  if keepdims:
+    variance = [variance]
+  return variance
 
 def broadcasted_shape(shape1, shape2):
   res_shape = []
