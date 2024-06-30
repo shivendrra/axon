@@ -1,5 +1,7 @@
 # Axon Library
 
+![axonlogo.png](https://github.com/shivendrra/axon/blob/main/logo.jpg)
+
 Axon is a lightweight Python library for creating and manipulating multi-dimensional arrays, inspired by libraries such as NumPy. It's written in python only, for now.
 
 ## Features
