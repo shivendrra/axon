@@ -1,4 +1,3 @@
-import random
 from .helpers.utils import _zeros, _ones, _randint, _randn, _arange, _ones_like, _zeros_like
 from .dtypes.dtype import *
 from typing import *

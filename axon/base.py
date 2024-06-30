@@ -1,9 +1,9 @@
 from typing import *
 from .helpers.utils import _zeros
-from .helpers.shape import get_shape, _flatten, broadcasted_shape, broadcasted_array, reshape, re_flat, _unsqueeze, _squeeze, mean_axis
+from .helpers.shape import get_shape, _flatten, broadcasted_shape, broadcasted_array, reshape, re_flat, _unsqueeze, _squeeze, mean_axis, var_axis
 from .helpers.functionals import tanh, sigmoid, gelu, relu
 from .dtypes.dtype import *
-from .dtypes.convert import handle_conversion, convert_dtype
+from .dtypes.convert import handle_conversion
 from copy import deepcopy
 import math
 
@@ -16,6 +16,13 @@ float16 = 'float16'
 float32 = 'float32'
 float64 = 'float64'
 double = 'double'
+
+def handle_float(data1, data2):
+  dtype1, dtype2 = data1.dtype, data2.dtype
+  if dtype1 == array.float16 or dtype2 == array.float16:
+    return True
+  else:
+    return False
 
 class array:
   int8 = int8
@@ -104,7 +111,7 @@ class array:
     return tuple(get_shape(self.data))
   
   def T(self):
-    return list(map(list, zip(*self.data)))
+    return array(list(map(list, zip(*self.data))), dtype=self.dtype)
   
   def transpose(self, dim0:int, dim1:int):
     def _re_transpose(data, dim0, dim1, ndim, depth=0):
@@ -130,6 +137,11 @@ class array:
         return a + b
 
     target_shape, requires_broadcasting = broadcasted_shape(self.shape, other.shape)
+    req_conversion = handle_float(self, other)
+    if req_conversion:
+      self.dtype = array.float32
+      other.dtype = array.float32
+    
     if requires_broadcasting:
       self = array(broadcasted_array(self.data, target_shape), dtype=self.dtype)
       other = array(broadcasted_array(other.data, target_shape), dtype=other.dtype)
@@ -148,6 +160,11 @@ class array:
         return a * b
     
     target_shape, requires_broadcasting = broadcasted_shape(self.shape, other.shape)
+    req_conversion = handle_float(self, other)
+    if req_conversion:
+      self.dtype = array.float32
+      other.dtype = array.float32
+
     if requires_broadcasting:
       self = array(broadcasted_array(self.data, target_shape), dtype=self.dtype)
       other = array(broadcasted_array(other.data, target_shape), dtype=other.dtype)
@@ -162,10 +179,15 @@ class array:
     if self.shape[-1] != other.shape[-2]:
       raise ValueError("Matrices have incompatible dimensions for matmul")
 
+    req_conversion = handle_float(self, other)
+    if req_conversion:
+      self.dtype = array.float32
+      other.dtype = array.float32
+
     def _remul(a, b):
       if len(a.shape) == 2 and len(b.shape) == 2:
         out = _zeros((len(a.data), len(b.data[0])))
-        b_t = b.T()
+        b_t = b.T().data
         for i in range(len(a.data)):
           for j in range(len(b_t)):
             out[i][j] = sum(a.data[i][k] * b_t[j][k] for k in range(len(a.data[0])))
@@ -288,18 +310,6 @@ class array:
       return mean_axis(self.data, axis, keepdims)
 
   def var(self, axis:Optional[int]=None, ddof:int=0, keepdims:bool=False) -> list[float]:
-    def var_axis(data, mean_values, axis, ddof, keepdims):
-      if axis == 0:
-        transposed = list(map(list, zip(*data)))
-        if all(isinstance(i, list) for i in transposed[0]):
-          transposed = [list(map(list, zip(*d))) for d in transposed]
-        variance = [var_axis(d, mean_values[i], axis - 1, ddof, keepdims) if isinstance(d[0], list) else sum((x - mean_values[i]) ** 2 for x in d) / (len(d) - ddof) for i, d in enumerate(transposed)]
-      else:
-        variance = [var_axis(d, mean_values[i], axis - 1, ddof, keepdims) if isinstance(d[0], list) else sum((x - mean_values[i]) ** 2 for x in d) / (len(d) - ddof) for i, d in enumerate(data)]
-      if keepdims:
-        variance = [variance]
-      return variance
-
     if axis is None:
       flat_array = _flatten(self.data)
       mean_value = sum(flat_array) / len(flat_array)

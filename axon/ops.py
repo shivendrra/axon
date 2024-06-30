@@ -1,12 +1,7 @@
 from .base import array
 from .helpers.utils import _zeros
-from .helpers.shape import _squeeze, _unsqueeze, get_shape
+from .helpers.shape import _squeeze, _unsqueeze, get_shape, _get_element
 from typing import *
-
-def _get_element(data, indices):
-  for idx in indices:
-    data = data[idx]
-  return data
 
 def matmul(a:Union[array, list], b:Union[array, list]) -> array:
   a = a if isinstance(a, array) else array(a)
