@@ -234,6 +234,37 @@ class array:
       return math.pow(data, pow)
 
     return array(_pow(self.data, pow), dtype=array.float32)
+  
+  def dot(self, other):
+    other = other if isinstance(other, array) else array(other, dtype=self.dtype)
+    
+    def is_list_of_lists(lst):
+      return isinstance(lst, list) and any(isinstance(i, list) for i in lst)
+
+    def inner_product(v1, v2):
+      return sum(x * y for x, y in zip(v1, v2))
+
+    def matmul_2d(A, B):
+      B_T = list(zip(*B))
+      result = [[inner_product(row, col) for col in B_T] for row in A]
+      return result
+
+    def tensor_dot(tensor_a, tensor_b):
+      if not is_list_of_lists(tensor_a) and not is_list_of_lists(tensor_b):
+        return inner_product(tensor_a, tensor_b)
+      elif not is_list_of_lists(tensor_a):
+        return [tensor_dot(tensor_a, b) for b in tensor_b]
+      elif not is_list_of_lists(tensor_b):
+        return [tensor_dot(a, tensor_b) for a in tensor_a]
+      else:
+        return [tensor_dot(a, b) for a, b in zip(tensor_a, tensor_b)]
+
+    if self.ndim == 1 and other.ndim == 1:
+      return inner_product(self.data, other.data)
+    elif self.ndim == 2 and other.ndim == 2:
+      return array(matmul_2d(self.data, other.data), dtype=self.dtype)
+    else:
+      return array(tensor_dot(self.data, other.data), dtype=self.dtype)
 
   def sum(self, axis:int=None, keepdim:bool=False) -> List["array"]:
     def _re_sum(data, axis):

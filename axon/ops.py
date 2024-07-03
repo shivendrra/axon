@@ -8,6 +8,11 @@ def matmul(a:Union[array, list], b:Union[array, list]) -> array:
   b = b if isinstance(b, array) else array(b)
   return (a @ b).data
 
+def dot(a:Union[array, list], b:Union[array, list]) -> array:
+  a = a if isinstance(a, array) else array(a)
+  b = b if isinstance(b, array) else array(b)
+  return a.dot(b)
+
 def stack(data: tuple[array, array], axis: int=0) -> array:
   if not data:
     raise ValueError("Need atleast one array to stack")
