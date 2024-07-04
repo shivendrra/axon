@@ -133,3 +133,11 @@ def squeeze(*data, dim:int=0):
 def unsqueeze(*data, dim:int=0):
   for _data in data:
     return _unsqueeze(_data, dim)
+
+def clip(data, min, max, out=None):
+  data = data if isinstance(data, array) else array(data)
+  if out is not None:
+    return data.clip(min_value=min, max_value=max)
+  else:
+    out = data.clip(min_value=min, max_value=max)
+    return out

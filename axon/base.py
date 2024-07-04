@@ -403,3 +403,11 @@ class array:
       raise IndexError(f"Dimension out of range (expected to be in range of {self.ndim} dimensions)")
 
     return array(_squeeze(self.data, dim), dtype=self.dtype)
+  
+  def clip(self, min_value, max_value):
+    def _clip(data, min_value, max_value):
+      if isinstance(data, list):
+        return [_clip(d, min_value, max_value) for d in data]
+      return max(min(data, max_value), min_value)
+    
+    return array(_clip(self.data, min_value, max_value))
