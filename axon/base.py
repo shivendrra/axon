@@ -1,7 +1,7 @@
 from typing import *
 from .helpers.utils import _zeros
 from .helpers.shape import get_shape, _flatten, broadcasted_shape, broadcasted_array, reshape, re_flat, _unsqueeze, _squeeze, mean_axis, var_axis
-from .helpers.functionals import tanh, sigmoid, gelu, relu
+from .helpers.functionals import *
 from .dtypes.dtype import *
 from .dtypes.convert import handle_conversion
 from copy import deepcopy
@@ -234,6 +234,37 @@ class array:
       return math.pow(data, pow)
 
     return array(_pow(self.data, pow), dtype=array.float32)
+  
+  def dot(self, other):
+    other = other if isinstance(other, array) else array(other, dtype=self.dtype)
+    
+    def is_list_of_lists(lst):
+      return isinstance(lst, list) and any(isinstance(i, list) for i in lst)
+
+    def inner_product(v1, v2):
+      return sum(x * y for x, y in zip(v1, v2))
+
+    def matmul_2d(A, B):
+      B_T = list(zip(*B))
+      result = [[inner_product(row, col) for col in B_T] for row in A]
+      return result
+
+    def tensor_dot(tensor_a, tensor_b):
+      if not is_list_of_lists(tensor_a) and not is_list_of_lists(tensor_b):
+        return inner_product(tensor_a, tensor_b)
+      elif not is_list_of_lists(tensor_a):
+        return [tensor_dot(tensor_a, b) for b in tensor_b]
+      elif not is_list_of_lists(tensor_b):
+        return [tensor_dot(a, tensor_b) for a in tensor_a]
+      else:
+        return [tensor_dot(a, b) for a, b in zip(tensor_a, tensor_b)]
+
+    if self.ndim == 1 and other.ndim == 1:
+      return inner_product(self.data, other.data)
+    elif self.ndim == 2 and other.ndim == 2:
+      return array(matmul_2d(self.data, other.data), dtype=self.dtype)
+    else:
+      return array(tensor_dot(self.data, other.data), dtype=self.dtype)
 
   def sum(self, axis:int=None, keepdim:bool=False) -> List["array"]:
     def _re_sum(data, axis):
@@ -275,12 +306,28 @@ class array:
         return relu(data)
     return array(_apply(self.data), dtype=array.float32)
   
+  def relu_derivative(self) -> List["array"]:
+    def _apply(data):
+      if isinstance(data, list):
+        return [_apply(sub_data) for sub_data in data]
+      else:
+        return relu_derivative(data)
+    return array(_apply(self.data), dtype=array.float32)
+  
   def tanh(self) -> List["array"]:
     def _apply(data):
       if isinstance(data, list):
         return [_apply(sub_data) for sub_data in data]
       else:
         return tanh(data)
+    return array(_apply(self.data), dtype=array.float32)
+  
+  def tanh_derivative(self) -> List["array"]:
+    def _apply(data):
+      if isinstance(data, list):
+        return [_apply(sub_data) for sub_data in data]
+      else:
+        return tanh_derivative(data)
     return array(_apply(self.data), dtype=array.float32)
   
   def sigmoid(self) -> List["array"]:
@@ -291,12 +338,28 @@ class array:
         return sigmoid(data)
     return array(_apply(self.data), dtype=array.float32)
   
+  def sigmoid_derivative(self) -> List["array"]:
+    def _apply(data):
+      if isinstance(data, list):
+        return [_apply(sub_data) for sub_data in data]
+      else:
+        return sigmoid_derivative(data)
+    return array(_apply(self.data), dtype=array.float32)
+  
   def gelu(self) -> List["array"]:
     def _apply(data):
       if isinstance(data, list):
         return [_apply(sub_data) for sub_data in data]
       else:
         return gelu(data)
+    return array(_apply(self.data), dtype=array.float32)
+  
+  def gelu_derivative(self) -> List["array"]:
+    def _apply(data):
+      if isinstance(data, list):
+        return [_apply(sub_data) for sub_data in data]
+      else:
+        return gelu_derivative(data)
     return array(_apply(self.data), dtype=array.float32)
 
   def mean(self, axis:Optional[int]=None, keepdims:bool=False) -> list[float]:
@@ -340,3 +403,11 @@ class array:
       raise IndexError(f"Dimension out of range (expected to be in range of {self.ndim} dimensions)")
 
     return array(_squeeze(self.data, dim), dtype=self.dtype)
+  
+  def clip(self, min_value, max_value):
+    def _clip(data, min_value, max_value):
+      if isinstance(data, list):
+        return [_clip(d, min_value, max_value) for d in data]
+      return max(min(data, max_value), min_value)
+    
+    return array(_clip(self.data, min_value, max_value))

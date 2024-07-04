@@ -8,6 +8,11 @@ def matmul(a:Union[array, list], b:Union[array, list]) -> array:
   b = b if isinstance(b, array) else array(b)
   return (a @ b).data
 
+def dot(a:Union[array, list], b:Union[array, list]) -> array:
+  a = a if isinstance(a, array) else array(a)
+  b = b if isinstance(b, array) else array(b)
+  return a.dot(b)
+
 def stack(data: tuple[array, array], axis: int=0) -> array:
   if not data:
     raise ValueError("Need atleast one array to stack")
@@ -128,3 +133,11 @@ def squeeze(*data, dim:int=0):
 def unsqueeze(*data, dim:int=0):
   for _data in data:
     return _unsqueeze(_data, dim)
+
+def clip(data, min, max, out=None):
+  data = data if isinstance(data, array) else array(data)
+  if out is not None:
+    return data.clip(min_value=min, max_value=max)
+  else:
+    out = data.clip(min_value=min, max_value=max)
+    return out
