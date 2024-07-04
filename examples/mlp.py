@@ -1,6 +1,6 @@
 import numpy as np
 
-class MLP:
+class MLPnp:
   def __init__(self, input_size, hidden_size, output_size):
 
     self.W1 = np.random.randn(hidden_size, input_size) * 0.01
@@ -57,5 +57,66 @@ np.random.seed(42)
 X = np.random.randn(2, 100)
 Y = (np.sum(X, axis=0) > 0).reshape(1, 100)
 
-mlp = MLP(input_size=2, hidden_size=3, output_size=1)
+mlp = MLPnp(input_size=2, hidden_size=3, output_size=1)
 mlp.train(X, Y, iters=1000, learning_rate=0.1)
+
+## MLP written in axon
+
+import axon
+import math
+
+class MLP:
+  def __init__(self, _in, _out, _hidden) -> None:
+    self.wei1 = axon.randn(shape=(_in, _hidden))
+    self.b1 = axon.zeros(shape=(1, _hidden))
+    self.wei2 = axon.randn(shape=(_hidden, _out))
+    self.b2 = axon.zeros(shape=(1, _out))
+  
+  def forward(self, X):
+    self.out1 = X @ self.wei1 + self.b1
+    self.out2 = self.sigmoid(self.out1)
+    self.out3 = self.out2 @ self.wei2 + self.b2
+    self.out4 = self.sigmoid(self.out3)
+    return self.out4
+  
+  def sigmoid(self, z):
+    return axon.array([[1 / (1 + math.exp(-val)) for val in row] for row in z])
+  
+  def sigmoid_derivative(self, z):
+    return z * (1 - z)
+
+  def backward(self, X, Y, lr):
+    m = X.shape[1]
+
+    dZ2 = self.out4 - Y
+    dW2 = (self.wei1 @ dZ2) * (1/m)
+    db2 = dZ2.sum(axis=1, keepdim=True) * (1/ m)
+
+    dA1 = (dZ2 @ self.wei2.T())
+    dZ1 = dA1 * self.out1.sigmoid_derivative()
+    dW1 = dZ1 @ X.T() * (1/m)
+    db1 = dZ1.sum(axis=1, keepdim=True) * (1/m)
+
+    self.wei1 -= lr * dW1
+    self.b1 -= lr * db1
+    self.wei2 -= lr * dW2
+    self.b2 -= lr * db2
+  
+  def train(self, X, Y, iters, lr):
+    for i in range(iters):
+      output = self.forward(X)
+      self.backward(X, Y, lr)
+      if i % 100 == 0:
+        loss = self.cal_loss(Y, output)
+        print(f"iter: {i}, loss: {loss}")
+  
+  def cal_loss(self, Y, output):
+    m = Y.shape[1]
+    loss = -((Y * output.log()) + ((1-Y) * (1 - output).log())).sum() / m
+    return loss
+
+X = axon.randn(shape=(2, 4))
+Y = axon.array([axon.randint(-5, 5, size=10).data for _ in range(1)])
+mlp = MLP(4, 10, 2)
+out = mlp.forward(X)
+mlp.train(X, Y, iters=1000, lr=0.1)

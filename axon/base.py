@@ -1,7 +1,7 @@
 from typing import *
 from .helpers.utils import _zeros
 from .helpers.shape import get_shape, _flatten, broadcasted_shape, broadcasted_array, reshape, re_flat, _unsqueeze, _squeeze, mean_axis, var_axis
-from .helpers.functionals import tanh, sigmoid, gelu, relu
+from .helpers.functionals import *
 from .dtypes.dtype import *
 from .dtypes.convert import handle_conversion
 from copy import deepcopy
@@ -306,12 +306,28 @@ class array:
         return relu(data)
     return array(_apply(self.data), dtype=array.float32)
   
+  def relu_derivative(self) -> List["array"]:
+    def _apply(data):
+      if isinstance(data, list):
+        return [_apply(sub_data) for sub_data in data]
+      else:
+        return relu_derivative(data)
+    return array(_apply(self.data), dtype=array.float32)
+  
   def tanh(self) -> List["array"]:
     def _apply(data):
       if isinstance(data, list):
         return [_apply(sub_data) for sub_data in data]
       else:
         return tanh(data)
+    return array(_apply(self.data), dtype=array.float32)
+  
+  def tanh_derivative(self) -> List["array"]:
+    def _apply(data):
+      if isinstance(data, list):
+        return [_apply(sub_data) for sub_data in data]
+      else:
+        return tanh_derivative(data)
     return array(_apply(self.data), dtype=array.float32)
   
   def sigmoid(self) -> List["array"]:
@@ -322,12 +338,28 @@ class array:
         return sigmoid(data)
     return array(_apply(self.data), dtype=array.float32)
   
+  def sigmoid_derivative(self) -> List["array"]:
+    def _apply(data):
+      if isinstance(data, list):
+        return [_apply(sub_data) for sub_data in data]
+      else:
+        return sigmoid_derivative(data)
+    return array(_apply(self.data), dtype=array.float32)
+  
   def gelu(self) -> List["array"]:
     def _apply(data):
       if isinstance(data, list):
         return [_apply(sub_data) for sub_data in data]
       else:
         return gelu(data)
+    return array(_apply(self.data), dtype=array.float32)
+  
+  def gelu_derivative(self) -> List["array"]:
+    def _apply(data):
+      if isinstance(data, list):
+        return [_apply(sub_data) for sub_data in data]
+      else:
+        return gelu_derivative(data)
     return array(_apply(self.data), dtype=array.float32)
 
   def mean(self, axis:Optional[int]=None, keepdims:bool=False) -> list[float]:
