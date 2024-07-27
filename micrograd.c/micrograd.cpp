@@ -16,18 +16,11 @@ public:
     _backward = noop_backward;
   }
 
-  static void noop_backward(Value* v) {}
-
   static Value* add(Value* a, Value* b) {
     Value* out = new Value(a->data + b->data);
     out->_prev = {a, b};
     out->_backward = add_backward;
     return out;
-  }
-
-  static void add_backward(Value* v) {
-    v->_prev[0]->grad += v->grad;
-    v->_prev[1]->grad += v->grad;
   }
 
   static Value* mul(Value* a, Value* b) {
@@ -37,21 +30,12 @@ public:
     return out;
   }
 
-  static void mul_backward(Value* v) {
-    v->_prev[0]-> grad += v->_prev[1]->data * v->grad;
-    v->_prev[1]-> grad += v->_prev[0]->data * v->grad;
-  }
-
   static Value* pow_val(Value* a, double exp) {
     Value* out = new Value(std::pow(a->data, exp));
     out->_prev = {a};
     out->exp = exp;
     out->_backward = pow_backward;
     return out;
-  }
-
-  static void pow_backward(Value* v) {
-    v->_prev[0]->grad += v->exp * std::pow(v->_prev[0]->data, v->exp - 1) * v->grad;
   }
 
   static Value* negate(Value* a) {
@@ -73,10 +57,6 @@ public:
     return out;
   }
 
-  static void relu_backward(Value* v) {
-    v->_prev[0]->grad += (v->data > 0) * v->grad;
-  }
-
   static void build_topo(Value* v, std::vector<Value*>& topo, std::vector<Value*>& visited) {
     if (std::find(visited.begin(), visited.end(), v) == visited.end()) {
       visited.push_back(v);
@@ -90,7 +70,7 @@ public:
   static void backward(Value* v) {
     std::vector<Value*> topo;
     std::vector<Value*> visited;
-    
+
     build_topo(v, topo, visited);
     v->grad = 1.0;
     for (auto it = topo.rbegin(); it != topo.rend(); ++it) {
@@ -100,6 +80,27 @@ public:
 
   void print_value() const {
     std::cout << "Value(data=" << data << ", grad=" << grad << ")\n";
+  }
+
+private:
+  static void noop_backward(Value* v) {}
+
+  static void add_backward(Value* v) {
+    v->_prev[0]->grad += v->grad;
+    v->_prev[1]->grad += v->grad;
+  }
+
+  static void mul_backward(Value* v) {
+    v->_prev[0]->grad += v->_prev[1]->data * v->grad;
+    v->_prev[1]->grad += v->_prev[0]->data * v->grad;
+  }
+
+  static void pow_backward(Value* v) {
+    v->_prev[0]->grad += v->exp * std::pow(v->_prev[0]->data, v->exp - 1) * v->grad;
+  }
+
+  static void relu_backward(Value* v) {
+    v->_prev[0]->grad += (v->data > 0) * v->grad;
   }
 };
 
