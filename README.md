@@ -2,7 +2,7 @@
 
 ![axonlogo.png](https://github.com/shivendrra/axon/blob/main/logo.png)
 
-Axon is a lightweight Python library for creating and manipulating multi-dimensional arrays, inspired by libraries such as NumPy. It's written in python only, for now.
+You have seen [Micrograd](https://github.com/karpathy/micrograd) by Karpathy, this is the upgraded version of micrograd written in c/c++ & is more functions & operational support. A light weight scalar-level autograd engine written in c/c++ & python
 
 ## Features
 
@@ -21,6 +21,12 @@ Clone the repository:
 ```bash
 git clone https://github.com/shivendrra/axon.git
 cd axon
+```
+
+or
+
+```shell
+pip install axon
 ```
 
 ## Usage

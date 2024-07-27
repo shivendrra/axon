@@ -1,3 +1,8 @@
+*.exe
+.env
+
+*client_secret.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
