@@ -11,9 +11,17 @@ class value:
   def data(self):
     return self.value.data
 
+  @data.setter
+  def data(self, new_data):
+    self.value.data = new_data
+
   @property
   def grad(self):
     return self.value.grad
+  
+  @grad.setter
+  def grad(self, new_data):
+    self.value.grad = new_data
 
   def __add__(self, other):
     if isinstance(other, value):

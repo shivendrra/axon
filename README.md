@@ -37,9 +37,9 @@ print(c)
 print(d)
 print(e)
 print(f)
-
 ```
 
+you can even checkout [example](https://github.com/shivendrra/axon/tree/main/examples) neural networks to run them on your system, or build your own :-D.
 
 ## Forking the Repository
 
