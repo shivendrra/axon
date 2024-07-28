@@ -1,8 +1,20 @@
-# Axon.micro Library
+# Axon Library
 
 ![axonlogo.png](https://github.com/shivendrra/axon/blob/main/logo.png)
 
-You have seen [Micrograd](https://github.com/karpathy/micrograd) by Karpathy, this is the upgraded version of micrograd written in c/c++ & has more functions & operational support. A light weight scalar-level autograd engine written in c/c++ & python
+**Axon:** is a lightweight Python library for creating and manipulating multi-dimensional arrays, inspired by libraries such as NumPy. It's written in python only, for now.
+
+**Axon.micro:** You have seen [Micrograd](https://github.com/karpathy/micrograd) by Karpathy, this is the upgraded version of micrograd written in c/c++ & has more functions & operational support. A light weight scalar-level autograd engine written in c/c++ & python
+
+## Features
+
+- Element-wise operations (addition, multiplication, etc.)
+- Matrix multiplication
+- Broadcasting
+- Activation functions (ReLU, tanh, sigmoid, GELU)
+- Reshape, transpose, flatten
+- Data type conversion
+- Micrograd support(Scalar level autograd engine)
 
 ## Installation
 
@@ -17,9 +29,49 @@ cd axon
 
 You can use this similar to micrograd to build a simple neural network or do scalar level backprop.
 
+
+#### Axon.array
+
+```python
+from axon.base import array
+
+# Create two 2D arrays
+a = array([[1, 2], [3, 4]], dtype='int32')
+b = array([[5, 6], [7, 8]], dtype='int32')
+
+# Addition
+c = a + b
+print("Addition:\n", c)
+
+# Multiplication
+d = a * b
+print("Multiplication:\n", d)
+
+# Matrix Multiplication
+e = a @ b
+print("Matrix Multiplication:\n", e)
+```
+
+### Output:
+
+```
+Addition:
+ array([6, 8], [10, 12], dtype=int32)
+Multiplication:
+ array([5, 12], [21, 32], dtype=int32)
+Matrix Multiplication:
+ array([19, 22], [43, 50], dtype=int32)
+```
+
+anyway, prefer documentation for detailed usage guide:
+
+1. [axon.doc](https://github.com/shivendrra/axon/blob/main/docs/axon.md): for development purpose
+2. [usage.doc](https://github.com/shivendrra/axon/blob/main/docs/usage.md): for using it like numpy
+
+#### Axon.micro
 ```python
 
-from axon import value
+from axon.micro import value
 
 a = value(2)
 b = value(3)
