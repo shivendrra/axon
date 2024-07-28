@@ -2,17 +2,7 @@
 
 ![axonlogo.png](https://github.com/shivendrra/axon/blob/main/logo.png)
 
-You have seen [Micrograd](https://github.com/karpathy/micrograd) by Karpathy, this is the upgraded version of micrograd written in c/c++ & is more functions & operational support. A light weight scalar-level autograd engine written in c/c++ & python
-
-## Features
-
-- Element-wise operations (addition, multiplication, etc.)
-- Matrix multiplication
-- Broadcasting
-- Activation functions (ReLU, tanh, sigmoid, GELU)
-- Reshape, transpose, flatten
-- Data type conversion
-and many more.. *(work in progress)*
+You have seen [Micrograd](https://github.com/karpathy/micrograd) by Karpathy, this is the upgraded version of micrograd written in c/c++ & has more functions & operational support. A light weight scalar-level autograd engine written in c/c++ & python
 
 ## Installation
 
@@ -23,51 +13,33 @@ git clone https://github.com/shivendrra/axon.git
 cd axon
 ```
 
-or
-
-```shell
-pip install axon
-```
-
 ## Usage
 
-Here is a sample example showing some operations on two 2D arrays:
+You can use this similar to micrograd to build a simple neural network or do scalar level backprop.
 
 ```python
-from axon.base import array
 
-# Create two 2D arrays
-a = array([[1, 2], [3, 4]], dtype='int32')
-b = array([[5, 6], [7, 8]], dtype='int32')
+from axon import value
 
-# Addition
+a = value(2)
+b = value(3)
+
 c = a + b
-print("Addition:\n", c)
-
-# Multiplication
 d = a * b
-print("Multiplication:\n", d)
+e = c.relu()
+f = d ** 2.0
 
-# Matrix Multiplication
-e = a @ b
-print("Matrix Multiplication:\n", e)
+f.backward()
+
+print(a)
+print(b)
+print(c)
+print(d)
+print(e)
+print(f)
+
 ```
 
-### Output:
-
-```
-Addition:
- array([6, 8], [10, 12], dtype=int32)
-Multiplication:
- array([5, 12], [21, 32], dtype=int32)
-Matrix Multiplication:
- array([19, 22], [43, 50], dtype=int32)
-```
-
-anyway, prefer documentation for detailed usage guide:
-
-1. [axon.doc](https://github.com/shivendrra/axon/blob/main/docs/axon.md): for development purpose
-2. [usage.doc](https://github.com/shivendrra/axon/blob/main/docs/usage.md): for using it like numpy
 
 ## Forking the Repository
 
@@ -96,6 +68,14 @@ git push origin my-feature-branch
 ```
 
 6. Create a pull request on the original repository.
+
+## Testing
+
+To run the unit tests you will have to install PyTorch, which the tests use as a reference for verifying the correctness of the calculated gradients. Then simply:
+
+```shell
+python -m pytest
+```
 
 ## Contributing
 

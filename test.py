@@ -1,7 +1,7 @@
-from axon import Value
+from axon import value
 
-a = Value(2)
-b = Value(3)
+a = value(2)
+b = value(3)
 
 c = a + b
 d = a * b
