@@ -2,25 +2,64 @@ import engine
 
 class value:
   def __init__(self, data):
-    self.value = engine.Value(data)
+    if isinstance(data, engine.Value):
+      self.value = data
+    else:
+      self.value = engine.Value(float(data))
+  
+  @property
+  def data(self):
+    return self.value.data
 
-  def add(self, other):
-    return value(engine.Value.add(self.value, other.value))
+  @data.setter
+  def data(self, new_data):
+    self.value.data = new_data
 
-  def mul(self, other):
-    return value(engine.Value.mul(self.value, other.value))
+  @property
+  def grad(self):
+    return self.value.grad
+  
+  @grad.setter
+  def grad(self, new_data):
+    self.value.grad = new_data
 
-  def pow_val(self, exp):
-    return value(engine.Value.pow_val(self.value, exp))
+  def __add__(self, other):
+    if isinstance(other, value):
+      return value(engine.Value.add(self.value, other.value))
+    return value(engine.Value.add(self.value, engine.Value(float(other))))
+    
+  def __radd__(self, other):
+    return self + other
 
-  def negate(self):
+  def __mul__(self, other):
+    if isinstance(other, value):
+      return value(engine.Value.mul(self.value, other.value))
+    return value(engine.Value.mul(self.value, engine.Value(float(other))))
+    
+  def __rmul__(self, other):
+    return self * other
+
+  def __pow__(self, exp):
+    return value(engine.Value.pow(self.value, exp))
+
+  def __neg__(self):
     return value(engine.Value.negate(self.value))
 
-  def sub(self, other):
-    return value(engine.Value.sub(self.value, other.value))
+  def __sub__(self, other):
+    if isinstance(other, value):
+      return value(engine.Value.sub(self.value, other.value))
+    return value(engine.Value.sub(self.value, engine.Value(float(other))))
+    
+  def __rsub__(self, other):
+    return value(engine.Value.sub(engine.Value(float(other)), self.value))
 
-  def truediv(self, other):
-    return value(engine.Value.truediv(self.value, other.value))
+  def __truediv__(self, other):
+    if isinstance(other, value):
+      return value(engine.Value.truediv(self.value, other.value))
+    return value(engine.Value.truediv(self.value, engine.Value(float(other))))
+
+  def __rtruediv__(self, other):
+    return value(engine.Value.truediv(engine.Value(float(other)), self.value))
 
   def relu(self):
     return value(engine.Value.relu(self.value))
@@ -29,4 +68,7 @@ class value:
     engine.Value.backward(self.value)
 
   def __repr__(self):
-    self.value.print_value()
+    return f"Value(data={self.value.data}, grad={self.value.grad})"
+
+  def __str__(self):
+    return self.__repr__()

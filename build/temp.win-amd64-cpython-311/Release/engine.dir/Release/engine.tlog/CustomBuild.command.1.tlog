@@ -1,0 +1,10 @@
+^D:\MACHINE LEARNING\AXON\CMAKELISTS.TXT
+setlocal
+C:\Users\shivh\AppData\Roaming\Python\Python311\site-packages\cmake\data\bin\cmake.exe "-SD:/Machine learning/axon" "-BD:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release" --check-stamp-file "D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

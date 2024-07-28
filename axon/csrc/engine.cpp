@@ -89,6 +89,14 @@ void Value::backward(Value* v) {
   }
 }
 
-void Value::print_value() const {
-  std::cout << "Value(data=" << data << ", grad=" << grad << ")\n";
+std::string Value::repr() const {
+  return "Value(data=" + std::to_string(data) + ", grad=" + std::to_string(grad) + ")";
+}
+
+double Value::get_data() const {
+  return data;
+}
+
+double Value::get_grad() const {
+  return grad;
 }

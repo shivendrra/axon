@@ -2,6 +2,7 @@
 #define ENGINE_H
 
 #include <vector>
+#include <string>
 
 class Value {
 public:
@@ -12,7 +13,7 @@ public:
   void (*_backward)(Value*);
 
   Value(double data);
-    
+
   static void noop_backward(Value* v);
 
   static Value* add(Value* a, Value* b);
@@ -34,7 +35,9 @@ public:
   static void build_topo(Value* v, std::vector<Value*>& topo, std::vector<Value*>& visited);
   static void backward(Value* v);
 
-  void print_value() const;
+  std::string repr() const;
+  double get_data() const;
+  double get_grad() const;
 };
 
 #endif
