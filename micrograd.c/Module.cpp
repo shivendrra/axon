@@ -1,4 +1,5 @@
 #include "Module.h"
+#include <iostream>
 
 void Module::zero_grad() {
   for (auto& p : parameters()) {
@@ -10,37 +11,30 @@ std::vector<std::shared_ptr<Value>> Module::parameters() {
   return {};
 }
 
-Neuron::Neuron(int nin, bool nonlin)
-  : nonlin(nonlin) {
-  std::random_device rd;
-  std::mt19937 gen(rd());
-  std::uniform_real_distribution<> dis(-1, 1);
-
+Neuron::Neuron(int nin, bool nonlin) : nonlin(nonlin) {
   for (int i = 0; i < nin; ++i) {
-    w.push_back(std::make_shared<Value>(dis(gen)));
+    w.push_back(std::make_shared<Value>(0.0));
   }
   b = std::make_shared<Value>(0.0);
 }
 
 std::shared_ptr<Value> Neuron::operator()(const std::vector<std::shared_ptr<Value>>& x) {
-  auto act = std::accumulate(x.begin(), x.end(), b, 
-    [this](std::shared_ptr<Value> sum, std::shared_ptr<Value> xi) {
-      return Value::add(sum, Value::mul(this->w[&xi - &x[0]], xi));
-    }
-  );
-  return nonlin ? Value::relu(act) : act;
+  auto sum = std::make_shared<Value>(0.0);
+  for (size_t i = 0; i < x.size(); ++i) {
+    sum = Value::add(sum, Value::mul(w[i], x[i]));
+  }
+  sum = Value::add(sum, b);
+  return nonlin ? Value::relu(sum) : sum;
 }
 
 std::vector<std::shared_ptr<Value>> Neuron::parameters() {
-  auto params = w;
+  std::vector<std::shared_ptr<Value>> params = w;
   params.push_back(b);
   return params;
 }
 
 std::string Neuron::repr() const {
-  std::ostringstream oss;
-  oss << (nonlin ? "ReLU" : "Linear") << "Neuron(" << w.size() << ")";
-  return oss.str();
+  return "Neuron";
 }
 
 Layer::Layer(int nin, int nout, bool nonlin) {
@@ -51,37 +45,30 @@ Layer::Layer(int nin, int nout, bool nonlin) {
 
 std::vector<std::shared_ptr<Value>> Layer::operator()(const std::vector<std::shared_ptr<Value>>& x) {
   std::vector<std::shared_ptr<Value>> out;
-  for (auto& n : neurons) {
-    out.push_back((*n)(x));
+  for (auto& neuron : neurons) {
+    out.push_back((*neuron)(x));
   }
-  return out.size() == 1 ? std::vector<std::shared_ptr<Value>>{out[0]} : out;
+  return out;
 }
 
 std::vector<std::shared_ptr<Value>> Layer::parameters() {
   std::vector<std::shared_ptr<Value>> params;
-  for (auto& n : neurons) {
-    auto n_params = n->parameters();
-    params.insert(params.end(), n_params.begin(), n_params.end());
+  for (auto& neuron : neurons) {
+    auto neuron_params = neuron->parameters();
+    params.insert(params.end(), neuron_params.begin(), neuron_params.end());
   }
   return params;
 }
 
 std::string Layer::repr() const {
-  std::ostringstream oss;
-  oss << "Layer of [";
-  for (size_t i = 0; i < neurons.size(); ++i) {
-    oss << neurons[i]->repr();
-    if (i < neurons.size() - 1) oss << ", ";
-  }
-  oss << "]";
-  return oss.str();
+  return "Layer";
 }
 
 MLP::MLP(int nin, const std::vector<int>& nouts) {
-  std::vector<int> sz = {nin};
-  sz.insert(sz.end(), nouts.begin(), nouts.end());
-  for (size_t i = 0; i < nouts.size(); ++i) {
-    layers.push_back(std::make_shared<Layer>(sz[i], sz[i + 1], i != nouts.size() - 1));
+  int n = nin;
+  for (auto& nout : nouts) {
+    layers.push_back(std::make_shared<Layer>(n, nout));
+    n = nout;
   }
 }
 
@@ -96,19 +83,12 @@ std::vector<std::shared_ptr<Value>> MLP::operator()(const std::vector<std::share
 std::vector<std::shared_ptr<Value>> MLP::parameters() {
   std::vector<std::shared_ptr<Value>> params;
   for (auto& layer : layers) {
-    auto l_params = layer->parameters();
-    params.insert(params.end(), l_params.begin(), l_params.end());
+    auto layer_params = layer->parameters();
+    params.insert(params.end(), layer_params.begin(), layer_params.end());
   }
   return params;
 }
 
 std::string MLP::repr() const {
-  std::ostringstream oss;
-  oss << "MLP of [";
-  for (size_t i = 0; i < layers.size(); ++i) {
-    oss << layers[i]->repr();
-    if (i < layers.size() - 1) oss << ", ";
-  }
-  oss << "]";
-  return oss.str();
+  return "MLP";
 }
