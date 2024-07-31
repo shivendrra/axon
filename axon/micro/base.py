@@ -64,6 +64,21 @@ class value:
   def relu(self):
     return value(engine.Value.relu(self.value))
 
+  def sigmoid(self):
+    return value(engine.Value.sigmoid(self.value))
+  
+  def tanh(self):
+    return value(engine.Value.tanh(self.value))
+  
+  def gelu(self):
+    return value(engine.Value.gelu(self.value))
+  
+  def silu(self):
+    return value(engine.Value.silu(self.value))
+  
+  def swiglu(self):
+    return value(engine.Value.swiglu(self.value))
+
   def backward(self):
     engine.Value.backward(self.value)
 

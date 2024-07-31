@@ -325,8 +325,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="D:\Machine learning\axon\axon\csrc\engine.cpp" />
-    <ClCompile Include="D:\Machine learning\axon\axon\csrc\bindings.cpp" />
+    <ClCompile Include="D:\Machine learning\axon\axon\micro\csrc\engine.cpp" />
+    <ClCompile Include="D:\Machine learning\axon\axon\micro\csrc\bindings.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="D:\Machine learning\axon\build\temp.win-amd64-cpython-311\Release\ZERO_CHECK.vcxproj">
