@@ -18,5 +18,10 @@ PYBIND11_MODULE(engine, m) {
     .def_static("sub", &Value::sub, py::return_value_policy::reference)
     .def_static("truediv", &Value::truediv, py::return_value_policy::reference)
     .def_static("relu", &Value::relu, py::return_value_policy::reference)
+    .def_static("tanh", &Value::tanh, py::return_value_policy::reference)
+    .def_static("sigmoid", &Value::sigmoid, py::return_value_policy::reference)
+    .def_static("gelu", &Value::gelu, py::return_value_policy::reference)
+    .def_static("silu", &Value::silu, py::return_value_policy::reference)
+    .def_static("swiglu", &Value::swiglu, py::return_value_policy::reference)
     .def_static("backward", &Value::backward, py::return_value_policy::reference);
 }

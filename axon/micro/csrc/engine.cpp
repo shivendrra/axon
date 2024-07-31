@@ -68,6 +68,71 @@ void Value::relu_backward(Value* v) {
   v->_prev[0]->grad += (v->data > 0) * v->grad;
 }
 
+Value* Value::tanh(Value* a) {
+  Value* out = new Value((exp(a) - exp(-a)) / (exp(a) + exp(-a)));
+  out->_prev = {a};
+  out->_backward = tanh_backward;
+}
+
+void Value::tanh_backward(Value* v) {
+  v->_prev[0]->grad += (1 - (v->data ** 2)) * v->grad;
+}
+
+Value* Value::sigmoid(Value* a) {
+  Value* out = new Value(1 / (1 - exp(-a)));
+  out->_prev = {a};
+  out->_backward = sigmoid_derivative;
+}
+
+void Value::sigmoid_derivative(Value* v) {
+  v->_prev[0]->grad += (v->data * (1 - v->data)) * v->grad;
+}
+
+Value* Value::gelu(Value* a) {
+  double phi = 0.5 * (1 + erf(a->data / sqrt(2)));
+  Value* out = new Value(a->data * phi);
+  out->_prev = {a};
+  out->_backward = gelu_derivative;
+  return out;
+}
+
+void Value::gelu_derivative(Value* v) {
+  Value* a = v->_prev[0];
+  double phi = 0.5 * (1 + erf(a->data / sqrt(2)));
+  double pdf = exp(-0.5 * a->data * a->data) / sqrt(2 * M_PI);
+  a->grad += (phi + a->data * pdf) * v->grad;
+}
+
+Value* Value::silu(Value* a) {
+  double sigmoid_a = 1 / (1 + exp(-a->data));
+  Value* out = new Value(a->data * sigmoid_a);
+  out->_prev = {a};
+  out->_backward = silu_derivative;
+  return out;
+}
+
+void Value::silu_derivative(Value* v) {
+  Value* a = v->_prev[0];
+  double sigmoid_a = 1 / (1 + exp(-a->data));
+  a->grad += (sigmoid_a * (1 + a->data * (1 - sigmoid_a))) * v->grad;
+}
+
+Value* Value::swiglu(Value* a) {
+  double sigmoid_a = 1 / (1 + exp(-a->data));
+  double glu_a = sigmoid_a * a->data;
+  Value* out = new Value(a->data * sigmoid_a * glu_a);
+  out->_prev = {a};
+  out->_backward = swiglu_derivative;
+  return out;
+}
+
+void Value::swiglu_derivative(Value* v) {
+  Value* a = v->_prev[0];
+  double sigmoid_a = 1 / (1 + exp(-a->data));
+  double glu_a = sigmoid_a * a->data;
+  a->grad += (sigmoid_a * (1 + a->data * (1 - sigmoid_a)) * glu_a + a->data * sigmoid_a * (1 - sigmoid_a) * a->data) * v->grad;
+}
+
 void Value::build_topo(Value* v, std::vector<Value*>& topo, std::vector<Value*>& visited) {
   if (std::find(visited.begin(), visited.end(), v) == visited.end()) {
     visited.push_back(v);
