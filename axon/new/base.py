@@ -1,6 +1,7 @@
 from typing import *
 import math
 from copy import deepcopy
+from .dtypes.convert import *
 
 int8 = 'int8'
 int16 = 'int16'
@@ -27,4 +28,4 @@ class array:
     self.ndim = len(self.shape)
     self.dtype = array.int32 if dtype is None else dtype
     if dtype is not None:
-      self.data = self._convert_dtype(self.data, dtype)
+      self.data = convert_dtype(self.data, dtype)
