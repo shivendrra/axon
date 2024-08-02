@@ -83,7 +83,7 @@ class value:
     engine.Value.backward(self.value)
 
   def __repr__(self):
-    return f"Value(data={self.value.data}, grad={self.value.grad})"
+    return f"Value=({self.value.data}), grad=({self.value.grad})"
 
   def __str__(self):
-    return self.__repr__()
+    return f"axon.micro[Value={self.value.data:.4f}, grad={self.value.grad:.4f}]"
