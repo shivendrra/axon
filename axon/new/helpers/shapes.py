@@ -18,7 +18,16 @@ def flatten(data:list) -> list:
     return [data]
 
 def flatten_recursive(data:list, start_dim:int=0, end_dim:int=-1) -> list:
-  raise NotImplementedError("Not written yet")
+  def _recurse_flatten(data, current_dim):
+    if current_dim < start_dim:
+      return [_recurse_flatten(item, current_dim + 1) for item in data]
+    elif start_dim <= current_dim <= end_dim:
+      return flatten(data)
+    else:
+      return data
+  if end_dim == -1:
+    end_dim = len(get_shape(data)) - 1
+  return _recurse_flatten(data, 0)
 
 def transpose(data:list) -> list:
   return list(map(list, zip(*data)))
