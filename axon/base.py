@@ -1,7 +1,8 @@
 from typing import *
-from .dtypes.convert import handle_conversion, convert_dtype
+from .dtypes.convert import handle_conversion
 from .helpers.shapes import *
 from .helpers.functional import *
+from .helpers.ops import *
 from copy import deepcopy
 import math
 
@@ -31,19 +32,28 @@ class array:
     self.ndim = len(get_shape(data))
     self.dtype = array.int32 if dtype is None else dtype
     if dtype is not None:
-      self.data = convert_dtype(self.data, dtype)
+      self.data = handle_conversion(self.data, dtype)
 
   def __repr__(self) -> str:
-    if self.ndim == 1:
-      return f"array([{self.data}])"
-    data_str = ',\n\t'.join([str(row) for row in self.data])
-    return f"array([{data_str}])"
+    return f"array([{self.data}])"
 
   def __str__(self) -> str:
-    if self.ndim == 1:
-      return f"array([{self.data:.4f}], dtype={self.dtype})"
-    data_str = ',\n\t'.join([str(row) for row in self.data])
-    return f"array([{data_str:.4f}], dtype={self.dtype})"
+    def format_element(element):
+      if isinstance(element, list):
+        return [format_element(sub_element) for sub_element in element]
+      return f"{element:.4f}"
+
+    formatted_data = format_element(self.data)
+
+    def format_data(data, level=0):
+      if isinstance(data[0], list):
+        inner = ',\n'.join(['\t' * (level + 1) + format_data(sub_data, level + 1) for sub_data in data])
+        return f"[\n{inner}\n" + '  ' * level + "]"
+      return "[" + ', '.join(data) + "]"
+
+    formatted_str = format_data(formatted_data, 0)
+    formatted_str = formatted_str.replace('\t', ' ')
+    return f"array({formatted_str}, dtype={self.dtype})\n"
   
   def __getitem__(self, index:tuple):
     if isinstance(index, tuple):

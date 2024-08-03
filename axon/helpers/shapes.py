@@ -73,42 +73,6 @@ def broadcast(array, target_shape):
 
   return expand_dims(array, current_shape, target_shape)
 
-def mean_axis(data, axis, keepdims):
-  if axis == 0:
-    transposed = list(map(list, zip(*data)))
-    if all(isinstance(i, list) for i in transposed[0]):
-      transposed = [list(map(list, zip(*d))) for d in transposed]
-    mean_vals = [mean_axis(d, axis - 1, keepdims) if isinstance(d[0], list) else sum(d) / len(d) for d in transposed]
-  else:
-    mean_vals = [mean_axis(d, axis - 1, keepdims) if isinstance(d[0], list) else sum(d) / len(d) for d in data]
-  if keepdims:
-    mean_vals = [mean_vals]
-  return mean_vals
-
-def var_axis(data, mean_values, axis, ddof, keepdims):
-  if axis == 0:
-    transposed = list(map(list, zip(*data)))
-    if all(isinstance(i, list) for i in transposed[0]):
-      transposed = [list(map(list, zip(*d))) for d in transposed]
-    variance = [var_axis(d, mean_values[i], axis - 1, ddof, keepdims) if isinstance(d[0], list) else sum((x - mean_values[i]) ** 2 for x in d) / (len(d) - ddof) for i, d in enumerate(transposed)]
-  else:
-    variance = [var_axis(d, mean_values[i], axis - 1, ddof, keepdims) if isinstance(d[0], list) else sum((x - mean_values[i]) ** 2 for x in d) / (len(d) - ddof) for i, d in enumerate(data)]
-  if keepdims:
-    variance = [variance]
-  return variance
-
-def sum_axis(data, axis, keepdims):
-  if axis==0:
-    transposed = list(map(list, zip(*data)))
-    if all(isinstance(i, list) for i in transposed[0]):
-      transposed = [list(map(list, zip(*d))) for d in transposed]
-    mean_vals = [sum_axis(d, axis - 1, keepdims) if isinstance(d[0], list) else sum(d) for d in transposed]
-  else:
-    mean_vals = [sum_axis(d, axis - 1, keepdims) if isinstance(d[0], list) else sum(d) for d in data]
-  if keepdims:
-    mean_vals = [mean_vals]
-  return mean_vals
-
 def reshape(data:list, new_shape:tuple) -> list:
   raise NotImplementedError("Not yet written")
 
@@ -131,27 +95,3 @@ def squeeze(data, dim):
       return data[0] if len(data) == 1 else data
     return [squeeze(d, dim - 1) for d in data]
   return data
-
-def tensor_sum(data:list, axis:int=None, keepdim:bool=False) -> list:
-  def _re_sum(data, axis):
-    if axis is None:
-      return [sum(flatten(data))]
-    elif axis == 0:
-      return [sum(row[i] for row in data) for i in range(len(data[0]))]
-    else:
-      for i in range(len(data[0])):
-        for row in data:
-          if isinstance(row[i], list):
-            return _re_sum(row[i], axis-1)
-          return [_re_sum(data[j], None) for j in range(len(data))]
-  
-  if axis is not None and (axis < 0 or axis >= len(get_shape(data))):
-    raise ValueError("Axis out of range for the tensor")
-  
-  out = _re_sum(data, axis)
-  if keepdim:
-    if isinstance(out[0], list):
-      out = [item for item in out]
-  else:
-    out = flatten(out)
-  return out
