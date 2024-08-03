@@ -6,11 +6,6 @@ def get_shape(data:list) -> list:
   else:
     return []
 
-def get_element(data, indices):
-  for idx in indices:
-    data = data[idx]
-  return data
-
 def flatten(data:list) -> list:
   if isinstance(data, list):
     return [item for sublist in data for item in flatten(sublist)]
@@ -101,6 +96,18 @@ def var_axis(data, mean_values, axis, ddof, keepdims):
   if keepdims:
     variance = [variance]
   return variance
+
+def sum_axis(data, axis, keepdims):
+  if axis==0:
+    transposed = list(map(list, zip(*data)))
+    if all(isinstance(i, list) for i in transposed[0]):
+      transposed = [list(map(list, zip(*d))) for d in transposed]
+    mean_vals = [sum_axis(d, axis - 1, keepdims) if isinstance(d[0], list) else sum(d) for d in transposed]
+  else:
+    mean_vals = [sum_axis(d, axis - 1, keepdims) if isinstance(d[0], list) else sum(d) for d in data]
+  if keepdims:
+    mean_vals = [mean_vals]
+  return mean_vals
 
 def reshape(data:list, new_shape:tuple) -> list:
   raise NotImplementedError("Not yet written")
