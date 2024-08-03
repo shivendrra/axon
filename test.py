@@ -1,18 +1,15 @@
-from axon import value
+import axon
+from axon import array
 
-a = value(2)
-b = value(3)
+a = [[[[1, -2, 9], [4, -2, 1]], [[0, -2, 9], [1, 3, 5]]],
+     [[[1, -2, 9], [4, -2, 1]], [[0, -2, 9], [1, 3, 5]]],
+     [[[1, -2, 9], [4, -2, 1]], [[0, -2, 9], [1, 3, 5]]],
+     [[[1, -2, 9], [4, -2, 1]], [[0, -2, 9], [1, 3, 5]]]]
 
-c = a + b
-d = a * b
-e = c.relu()
-f = d ** 2.0
+b = array(a, dtype=axon.float32)
 
-f.backward()
-
-print(a)
-print(b)
-print(c)
-print(d)
-print(e)
-print(f)
+print("original array: ", b)
+print("sum: ", b.std())
+print("sum1: ", b.std(1))
+print("sum2: ", b.std(2))
+print("sum3: ", b.std(3))

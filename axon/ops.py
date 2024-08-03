@@ -1,6 +1,6 @@
 from .base import array
 from .helpers.utils import _zeros
-from .helpers.shape import _squeeze, _unsqueeze, get_shape, _get_element
+from .helpers.shapes import squeeze, unsqueeze, get_shape
 from typing import *
 
 def matmul(a:Union[array, list], b:Union[array, list]) -> array:
@@ -16,7 +16,12 @@ def dot(a:Union[array, list], b:Union[array, list]) -> array:
 def stack(data: tuple[array, array], axis: int=0) -> array:
   if not data:
     raise ValueError("Need atleast one array to stack")
-  
+
+  def get_element(data, indices):
+    for idx in indices:
+      data = data[idx]
+    return data
+
   # shape checking
   base_shape = data[0].shape
   for d in data:
@@ -36,7 +41,7 @@ def stack(data: tuple[array, array], axis: int=0) -> array:
         sub_arr = new_data
         for k in data_idx[:-1]:
           sub_arr = sub_arr[k]
-        sub_arr[data_idx[-1]] = _get_element(array.data, indices[:axis] + indices[axis+1:])
+        sub_arr[data_idx[-1]] = get_element(array.data, indices[:axis] + indices[axis+1:])
       return
       
     for i in range(new_shape[len(indices)]):
@@ -64,6 +69,11 @@ def concat(data: tuple[array, array], axis: int=0) -> array:
       data = data[idx]
     data[indices[-1]] = value
 
+  def get_element(data, indices):
+    for idx in indices:
+      data = data[idx]
+    return data
+
   def insert_data(new_data, arrays, axis, indices=[]):
     if len(indices) == len(new_shape):
       current_offset = 0
@@ -71,7 +81,7 @@ def concat(data: tuple[array, array], axis: int=0) -> array:
         if current_offset <= indices[axis] < current_offset + array.shape[axis]:
           local_indices = indices[:]
           local_indices[axis] -= current_offset
-          ele = _get_element(array.data, local_indices)
+          ele = get_element(array.data, local_indices)
           set_element(new_data, indices, ele)
           break
         current_offset += array.shape[axis]
@@ -125,14 +135,16 @@ def std(data, axis:Optional[int]=None, ddof:int=0, dtype:Optional[Literal['int8'
 
 def squeeze(*data, dim:int=0):
   for _data in data:
-    if dim is not None and (dim<0 or dim>=len(get_shape(_data))):
+    if dim is not None and dim>=len(get_shape(_data)):
+      dim = dim if dim > 0 else len(get_shape(_data)) - 1
       raise IndexError(f"Dimension out of range (expected to be in range of {len(get_shape(_data))} dimensions)")
     else:
-      return _squeeze(_data, dim)
+      return squeeze(_data, dim)
 
 def unsqueeze(*data, dim:int=0):
   for _data in data:
-    return _unsqueeze(_data, dim)
+    dim = dim if dim > 0 else len(get_shape(_data)) - 1
+    return unsqueeze(_data, dim)
 
 def clip(data, min, max, out=None):
   data = data if isinstance(data, array) else array(data)

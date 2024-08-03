@@ -64,11 +64,26 @@ class value:
   def relu(self):
     return value(engine.Value.relu(self.value))
 
+  def sigmoid(self):
+    return value(engine.Value.sigmoid(self.value))
+  
+  def tanh(self):
+    return value(engine.Value.tanh(self.value))
+  
+  def gelu(self):
+    return value(engine.Value.gelu(self.value))
+  
+  def silu(self):
+    return value(engine.Value.silu(self.value))
+  
+  def swiglu(self):
+    return value(engine.Value.swiglu(self.value))
+
   def backward(self):
     engine.Value.backward(self.value)
 
   def __repr__(self):
-    return f"Value(data={self.value.data}, grad={self.value.grad})"
+    return f"Value=({self.value.data}), grad=({self.value.grad})"
 
   def __str__(self):
-    return self.__repr__()
+    return f"axon.micro[Value={self.value.data:.4f}, grad={self.value.grad:.4f}]"

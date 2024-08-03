@@ -31,6 +31,16 @@ public:
 
   static Value* relu(Value* a);
   static void relu_backward(Value* v);
+  static Value* tanh(Value* a);
+  static void tanh_backward(Value* v);
+  static Value* sigmoid(Value* a);
+  static void sigmoid_derivative(Value* v);
+  static Value* gelu(Value* a);
+  static void gelu_derivative(Value* v);
+  static Value* silu(Value* a);
+  static void silu_derivative(Value* v);
+  static Value* swiglu(Value* a);
+  static void swiglu_derivative(Value* v);
 
   static void build_topo(Value* v, std::vector<Value*>& topo, std::vector<Value*>& visited);
   static void backward(Value* v);

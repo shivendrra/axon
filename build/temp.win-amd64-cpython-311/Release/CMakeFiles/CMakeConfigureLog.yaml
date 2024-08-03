@@ -24,7 +24,7 @@ events:
       The output was:
       0
       MSBuild version 17.10.4+10fbfbf2e for .NET Framework
-      Build started 28-07-2024 13:06:19.
+      Build started 31-07-2024 23:56:31.
       
       Project "D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\3.29.3\\CompilerIdC\\CompilerIdC.vcxproj" on node 1 (default targets).
       PrepareForBuild:
@@ -53,7 +53,7 @@ events:
           0 Warning(s)
           0 Error(s)
       
-      Time Elapsed 00:00:01.53
+      Time Elapsed 00:00:02.50
       
       
       Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.exe"
@@ -79,7 +79,7 @@ events:
       The output was:
       0
       MSBuild version 17.10.4+10fbfbf2e for .NET Framework
-      Build started 28-07-2024 13:06:21.
+      Build started 31-07-2024 23:56:34.
       
       Project "D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\3.29.3\\CompilerIdCXX\\CompilerIdCXX.vcxproj" on node 1 (default targets).
       PrepareForBuild:
@@ -108,7 +108,7 @@ events:
           0 Warning(s)
           0 Error(s)
       
-      Time Elapsed 00:00:01.51
+      Time Elapsed 00:00:02.15
       
       
       Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.exe"
@@ -127,8 +127,8 @@ events:
     checks:
       - "Detecting C compiler ABI info"
     directories:
-      source: "D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-l487ak"
-      binary: "D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-l487ak"
+      source: "D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-weccuv"
+      binary: "D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-weccuv"
     cmakeVariables:
       CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS /W3"
       CMAKE_C_FLAGS_DEBUG: "/MDd /Zi /Ob0 /Od /RTC1"
@@ -137,40 +137,40 @@ events:
       variable: "CMAKE_C_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: 'D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-l487ak'
+        Change Dir: 'D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-weccuv'
         
-        Run Build Command(s): "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_cf214.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        Run Build Command(s): "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_b201e.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
         MSBuild version 17.10.4+10fbfbf2e for .NET Framework
-        Build started 28-07-2024 13:06:23.
+        Build started 31-07-2024 23:56:37.
         
-        Project "D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-l487ak\\cmTC_cf214.vcxproj" on node 1 (default targets).
+        Project "D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-weccuv\\cmTC_b201e.vcxproj" on node 1 (default targets).
         PrepareForBuild:
-          Creating directory "cmTC_cf214.dir\\Debug\\".
+          Creating directory "cmTC_b201e.dir\\Debug\\".
           Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
-          Creating directory "D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-l487ak\\Debug\\".
-          Creating directory "cmTC_cf214.dir\\Debug\\cmTC_cf214.tlog\\".
+          Creating directory "D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-weccuv\\Debug\\".
+          Creating directory "cmTC_b201e.dir\\Debug\\cmTC_b201e.tlog\\".
         InitializeBuildStatus:
-          Creating "cmTC_cf214.dir\\Debug\\cmTC_cf214.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
-          Touching "cmTC_cf214.dir\\Debug\\cmTC_cf214.tlog\\unsuccessfulbuild".
+          Creating "cmTC_b201e.dir\\Debug\\cmTC_b201e.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+          Touching "cmTC_b201e.dir\\Debug\\cmTC_b201e.tlog\\unsuccessfulbuild".
         ClCompile:
-          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.40.33807\\bin\\HostX64\\x64\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_cf214.dir\\Debug\\\\" /Fd"cmTC_cf214.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\\Users\\shivh\\AppData\\Roaming\\Python\\Python311\\site-packages\\cmake\\data\\share\\cmake-3.29\\Modules\\CMakeCCompilerABI.c"
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.40.33807\\bin\\HostX64\\x64\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_b201e.dir\\Debug\\\\" /Fd"cmTC_b201e.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\\Users\\shivh\\AppData\\Roaming\\Python\\Python311\\site-packages\\cmake\\data\\share\\cmake-3.29\\Modules\\CMakeCCompilerABI.c"
           Microsoft (R) C/C++ Optimizing Compiler Version 19.40.33813 for x64
           Copyright (C) Microsoft Corporation.  All rights reserved.
-          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_cf214.dir\\Debug\\\\" /Fd"cmTC_cf214.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\\Users\\shivh\\AppData\\Roaming\\Python\\Python311\\site-packages\\cmake\\data\\share\\cmake-3.29\\Modules\\CMakeCCompilerABI.c"
+          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_b201e.dir\\Debug\\\\" /Fd"cmTC_b201e.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TC /errorReport:queue "C:\\Users\\shivh\\AppData\\Roaming\\Python\\Python311\\site-packages\\cmake\\data\\share\\cmake-3.29\\Modules\\CMakeCCompilerABI.c"
           CMakeCCompilerABI.c
         Link:
-          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.40.33807\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-l487ak\\Debug\\cmTC_cf214.exe" /INCREMENTAL /ILK:"cmTC_cf214.dir\\Debug\\cmTC_cf214.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-l487ak/Debug/cmTC_cf214.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-l487ak/Debug/cmTC_cf214.lib" /MACHINE:X64  /machine:x64 cmTC_cf214.dir\\Debug\\CMakeCCompilerABI.obj
-          cmTC_cf214.vcxproj -> D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-l487ak\\Debug\\cmTC_cf214.exe
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.40.33807\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-weccuv\\Debug\\cmTC_b201e.exe" /INCREMENTAL /ILK:"cmTC_b201e.dir\\Debug\\cmTC_b201e.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-weccuv/Debug/cmTC_b201e.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-weccuv/Debug/cmTC_b201e.lib" /MACHINE:X64  /machine:x64 cmTC_b201e.dir\\Debug\\CMakeCCompilerABI.obj
+          cmTC_b201e.vcxproj -> D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-weccuv\\Debug\\cmTC_b201e.exe
         FinalizeBuildStatus:
-          Deleting file "cmTC_cf214.dir\\Debug\\cmTC_cf214.tlog\\unsuccessfulbuild".
-          Touching "cmTC_cf214.dir\\Debug\\cmTC_cf214.tlog\\cmTC_cf214.lastbuildstate".
-        Done Building Project "D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-l487ak\\cmTC_cf214.vcxproj" (default targets).
+          Deleting file "cmTC_b201e.dir\\Debug\\cmTC_b201e.tlog\\unsuccessfulbuild".
+          Touching "cmTC_b201e.dir\\Debug\\cmTC_b201e.tlog\\cmTC_b201e.lastbuildstate".
+        Done Building Project "D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-weccuv\\cmTC_b201e.vcxproj" (default targets).
         
         Build succeeded.
             0 Warning(s)
             0 Error(s)
         
-        Time Elapsed 00:00:01.39
+        Time Elapsed 00:00:01.53
         
       exitCode: 0
   -
@@ -210,8 +210,8 @@ events:
     checks:
       - "Detecting CXX compiler ABI info"
     directories:
-      source: "D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-1unpfx"
-      binary: "D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-1unpfx"
+      source: "D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-9lsjhi"
+      binary: "D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-9lsjhi"
     cmakeVariables:
       CMAKE_CXX_FLAGS: "-DVERSION_INFO=\\\"0.1\\\"  /DWIN32 /D_WINDOWS /W3 /GR /EHsc"
       CMAKE_CXX_FLAGS_DEBUG: "/MDd /Zi /Ob0 /Od /RTC1"
@@ -221,40 +221,40 @@ events:
       variable: "CMAKE_CXX_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: 'D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-1unpfx'
+        Change Dir: 'D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-9lsjhi'
         
-        Run Build Command(s): "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_78d6e.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        Run Build Command(s): "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_5923b.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
         MSBuild version 17.10.4+10fbfbf2e for .NET Framework
-        Build started 28-07-2024 13:06:25.
+        Build started 31-07-2024 23:56:39.
         
-        Project "D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-1unpfx\\cmTC_78d6e.vcxproj" on node 1 (default targets).
+        Project "D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-9lsjhi\\cmTC_5923b.vcxproj" on node 1 (default targets).
         PrepareForBuild:
-          Creating directory "cmTC_78d6e.dir\\Debug\\".
+          Creating directory "cmTC_5923b.dir\\Debug\\".
           Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
-          Creating directory "D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-1unpfx\\Debug\\".
-          Creating directory "cmTC_78d6e.dir\\Debug\\cmTC_78d6e.tlog\\".
+          Creating directory "D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-9lsjhi\\Debug\\".
+          Creating directory "cmTC_5923b.dir\\Debug\\cmTC_5923b.tlog\\".
         InitializeBuildStatus:
-          Creating "cmTC_78d6e.dir\\Debug\\cmTC_78d6e.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
-          Touching "cmTC_78d6e.dir\\Debug\\cmTC_78d6e.tlog\\unsuccessfulbuild".
+          Creating "cmTC_5923b.dir\\Debug\\cmTC_5923b.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+          Touching "cmTC_5923b.dir\\Debug\\cmTC_5923b.tlog\\unsuccessfulbuild".
         ClCompile:
-          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.40.33807\\bin\\HostX64\\x64\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D "VERSION_INFO=\\"0.1\\"" /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_78d6e.dir\\Debug\\\\" /Fd"cmTC_78d6e.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TP /errorReport:queue "C:\\Users\\shivh\\AppData\\Roaming\\Python\\Python311\\site-packages\\cmake\\data\\share\\cmake-3.29\\Modules\\CMakeCXXCompilerABI.cpp"
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.40.33807\\bin\\HostX64\\x64\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D "VERSION_INFO=\\"0.1\\"" /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_5923b.dir\\Debug\\\\" /Fd"cmTC_5923b.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TP /errorReport:queue "C:\\Users\\shivh\\AppData\\Roaming\\Python\\Python311\\site-packages\\cmake\\data\\share\\cmake-3.29\\Modules\\CMakeCXXCompilerABI.cpp"
           Microsoft (R) C/C++ Optimizing Compiler Version 19.40.33813 for x64
           Copyright (C) Microsoft Corporation.  All rights reserved.
-          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D "VERSION_INFO=\\"0.1\\"" /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_78d6e.dir\\Debug\\\\" /Fd"cmTC_78d6e.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TP /errorReport:queue "C:\\Users\\shivh\\AppData\\Roaming\\Python\\Python311\\site-packages\\cmake\\data\\share\\cmake-3.29\\Modules\\CMakeCXXCompilerABI.cpp"
+          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D "VERSION_INFO=\\"0.1\\"" /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_5923b.dir\\Debug\\\\" /Fd"cmTC_5923b.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TP /errorReport:queue "C:\\Users\\shivh\\AppData\\Roaming\\Python\\Python311\\site-packages\\cmake\\data\\share\\cmake-3.29\\Modules\\CMakeCXXCompilerABI.cpp"
           CMakeCXXCompilerABI.cpp
         Link:
-          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.40.33807\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-1unpfx\\Debug\\cmTC_78d6e.exe" /INCREMENTAL /ILK:"cmTC_78d6e.dir\\Debug\\cmTC_78d6e.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-1unpfx/Debug/cmTC_78d6e.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-1unpfx/Debug/cmTC_78d6e.lib" /MACHINE:X64  /machine:x64 cmTC_78d6e.dir\\Debug\\CMakeCXXCompilerABI.obj
-          cmTC_78d6e.vcxproj -> D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-1unpfx\\Debug\\cmTC_78d6e.exe
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.40.33807\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-9lsjhi\\Debug\\cmTC_5923b.exe" /INCREMENTAL /ILK:"cmTC_5923b.dir\\Debug\\cmTC_5923b.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-9lsjhi/Debug/cmTC_5923b.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-9lsjhi/Debug/cmTC_5923b.lib" /MACHINE:X64  /machine:x64 cmTC_5923b.dir\\Debug\\CMakeCXXCompilerABI.obj
+          cmTC_5923b.vcxproj -> D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-9lsjhi\\Debug\\cmTC_5923b.exe
         FinalizeBuildStatus:
-          Deleting file "cmTC_78d6e.dir\\Debug\\cmTC_78d6e.tlog\\unsuccessfulbuild".
-          Touching "cmTC_78d6e.dir\\Debug\\cmTC_78d6e.tlog\\cmTC_78d6e.lastbuildstate".
-        Done Building Project "D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-1unpfx\\cmTC_78d6e.vcxproj" (default targets).
+          Deleting file "cmTC_5923b.dir\\Debug\\cmTC_5923b.tlog\\unsuccessfulbuild".
+          Touching "cmTC_5923b.dir\\Debug\\cmTC_5923b.tlog\\cmTC_5923b.lastbuildstate".
+        Done Building Project "D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-9lsjhi\\cmTC_5923b.vcxproj" (default targets).
         
         Build succeeded.
             0 Warning(s)
             0 Error(s)
         
-        Time Elapsed 00:00:01.37
+        Time Elapsed 00:00:01.41
         
       exitCode: 0
   -
@@ -299,8 +299,8 @@ events:
     checks:
       - "Performing Test HAS_MSVC_GL_LTCG"
     directories:
-      source: "D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-98v14p"
-      binary: "D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-98v14p"
+      source: "D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-ol5y1r"
+      binary: "D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-ol5y1r"
     cmakeVariables:
       CMAKE_CXX_FLAGS: "-DVERSION_INFO=\\\"0.1\\\"  /DWIN32 /D_WINDOWS /W3 /GR /EHsc"
       CMAKE_CXX_FLAGS_DEBUG: "/MDd /Zi /Ob0 /Od /RTC1"
@@ -310,48 +310,48 @@ events:
       variable: "HAS_MSVC_GL_LTCG"
       cached: true
       stdout: |
-        Change Dir: 'D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-98v14p'
+        Change Dir: 'D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-ol5y1r'
         
-        Run Build Command(s): "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_51c16.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        Run Build Command(s): "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_4900d.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
         MSBuild version 17.10.4+10fbfbf2e for .NET Framework
-        Build started 28-07-2024 13:06:27.
+        Build started 31-07-2024 23:56:41.
         
-        Project "D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-98v14p\\cmTC_51c16.vcxproj" on node 1 (default targets).
+        Project "D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-ol5y1r\\cmTC_4900d.vcxproj" on node 1 (default targets).
         PrepareForBuild:
-          Creating directory "cmTC_51c16.dir\\Debug\\".
+          Creating directory "cmTC_4900d.dir\\Debug\\".
           Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
-          Creating directory "D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-98v14p\\Debug\\".
-          Creating directory "cmTC_51c16.dir\\Debug\\cmTC_51c16.tlog\\".
+          Creating directory "D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-ol5y1r\\Debug\\".
+          Creating directory "cmTC_4900d.dir\\Debug\\cmTC_4900d.tlog\\".
         InitializeBuildStatus:
-          Creating "cmTC_51c16.dir\\Debug\\cmTC_51c16.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
-          Touching "cmTC_51c16.dir\\Debug\\cmTC_51c16.tlog\\unsuccessfulbuild".
+          Creating "cmTC_4900d.dir\\Debug\\cmTC_4900d.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+          Touching "cmTC_4900d.dir\\Debug\\cmTC_4900d.tlog\\unsuccessfulbuild".
         ClCompile:
-          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.40.33807\\bin\\HostX64\\x64\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /GL /D _MBCS /D "VERSION_INFO=\\"0.1\\"" /D WIN32 /D _WINDOWS /D HAS_MSVC_GL_LTCG /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /std:c++14 /Fo"cmTC_51c16.dir\\Debug\\\\" /Fd"cmTC_51c16.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TP /errorReport:queue "D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-98v14p\\src.cxx"
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.40.33807\\bin\\HostX64\\x64\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /GL /D _MBCS /D "VERSION_INFO=\\"0.1\\"" /D WIN32 /D _WINDOWS /D HAS_MSVC_GL_LTCG /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /std:c++14 /Fo"cmTC_4900d.dir\\Debug\\\\" /Fd"cmTC_4900d.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TP /errorReport:queue "D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-ol5y1r\\src.cxx"
           Microsoft (R) C/C++ Optimizing Compiler Version 19.40.33813 for x64
           Copyright (C) Microsoft Corporation.  All rights reserved.
-          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /GL /D _MBCS /D "VERSION_INFO=\\"0.1\\"" /D WIN32 /D _WINDOWS /D HAS_MSVC_GL_LTCG /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /std:c++14 /Fo"cmTC_51c16.dir\\Debug\\\\" /Fd"cmTC_51c16.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TP /errorReport:queue "D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-98v14p\\src.cxx"
+          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /GL /D _MBCS /D "VERSION_INFO=\\"0.1\\"" /D WIN32 /D _WINDOWS /D HAS_MSVC_GL_LTCG /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /std:c++14 /Fo"cmTC_4900d.dir\\Debug\\\\" /Fd"cmTC_4900d.dir\\Debug\\vc143.pdb" /external:W3 /Gd /TP /errorReport:queue "D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-ol5y1r\\src.cxx"
           src.cxx
         Link:
-          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.40.33807\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-98v14p\\Debug\\cmTC_51c16.exe" /INCREMENTAL /ILK:"cmTC_51c16.dir\\Debug\\cmTC_51c16.ilk" /NOLOGO "-LTCG" kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-98v14p/Debug/cmTC_51c16.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-98v14p/Debug/cmTC_51c16.lib" /MACHINE:X64  /machine:x64 cmTC_51c16.dir\\Debug\\src.obj
-        LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/LTCG' specification [D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-98v14p\\cmTC_51c16.vcxproj]
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.40.33807\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-ol5y1r\\Debug\\cmTC_4900d.exe" /INCREMENTAL /ILK:"cmTC_4900d.dir\\Debug\\cmTC_4900d.ilk" /NOLOGO "-LTCG" kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-ol5y1r/Debug/cmTC_4900d.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:/Machine learning/axon/build/temp.win-amd64-cpython-311/Release/CMakeFiles/CMakeScratch/TryCompile-ol5y1r/Debug/cmTC_4900d.lib" /MACHINE:X64  /machine:x64 cmTC_4900d.dir\\Debug\\src.obj
+        LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/LTCG' specification [D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-ol5y1r\\cmTC_4900d.vcxproj]
           Generating code
           Finished generating code
-          cmTC_51c16.vcxproj -> D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-98v14p\\Debug\\cmTC_51c16.exe
+          cmTC_4900d.vcxproj -> D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-ol5y1r\\Debug\\cmTC_4900d.exe
         FinalizeBuildStatus:
-          Deleting file "cmTC_51c16.dir\\Debug\\cmTC_51c16.tlog\\unsuccessfulbuild".
-          Touching "cmTC_51c16.dir\\Debug\\cmTC_51c16.tlog\\cmTC_51c16.lastbuildstate".
-        Done Building Project "D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-98v14p\\cmTC_51c16.vcxproj" (default targets).
+          Deleting file "cmTC_4900d.dir\\Debug\\cmTC_4900d.tlog\\unsuccessfulbuild".
+          Touching "cmTC_4900d.dir\\Debug\\cmTC_4900d.tlog\\cmTC_4900d.lastbuildstate".
+        Done Building Project "D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-ol5y1r\\cmTC_4900d.vcxproj" (default targets).
         
         Build succeeded.
         
-        "D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-98v14p\\cmTC_51c16.vcxproj" (default target) (1) ->
+        "D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-ol5y1r\\cmTC_4900d.vcxproj" (default target) (1) ->
         (Link target) -> 
-          LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/LTCG' specification [D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-98v14p\\cmTC_51c16.vcxproj]
+          LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/LTCG' specification [D:\\Machine learning\\axon\\build\\temp.win-amd64-cpython-311\\Release\\CMakeFiles\\CMakeScratch\\TryCompile-ol5y1r\\cmTC_4900d.vcxproj]
         
             1 Warning(s)
             0 Error(s)
         
-        Time Elapsed 00:00:01.37
+        Time Elapsed 00:00:01.40
         
       exitCode: 0
 ...
