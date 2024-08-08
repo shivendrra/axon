@@ -27,9 +27,6 @@ def flatten_recursive(data:list, start_dim:int=0, end_dim:int=-1) -> list:
 def transpose(data:list) -> list:
   return list(map(list, zip(*data)))
 
-def transpose_recursive(data:list, dim:int) -> list:
-  raise NotImplementedError("not written")
-
 def swap_axes(data:list, dim0:int, dim1:int, ndim:int, depth:int=0) -> list:
   if depth == ndim - 2:
     return [list(row) for row in zip(*data)]

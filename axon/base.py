@@ -99,6 +99,10 @@ class array:
       out *= dim
     return out
   
+  def transpose(self) -> List['array']:
+    out = array(transpose(self.data), dtype=self.dtype)
+    return out
+
   def flatten(self, start_dim:int=0, end_dim:int=-1) -> List['array']:
     start_dim = start_dim if start_dim > 0 else self.ndim - 1
     end_dim = end_dim if end_dim > 0 else self.ndim - 1
