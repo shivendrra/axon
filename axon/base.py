@@ -103,14 +103,15 @@ class array:
     out = array(transpose(self.data), dtype=self.dtype)
     return out
 
+  @property
+  def F(self) -> List['array']:
+    return array(flatten(self.data), dtype=self.dtype)
+
   def flatten(self, start_dim:int=0, end_dim:int=-1) -> List['array']:
     start_dim = start_dim if start_dim > 0 else self.ndim - 1
     end_dim = end_dim if end_dim > 0 else self.ndim - 1
     
     return array(flatten_recursive(self.data, start_dim, end_dim), dtype=self.dtype)
-  
-  def F(self) -> List['array']:
-    return array(flatten(self.data), dtype=self.dtype)
 
   def unsqueeze(self, dim:int=0):
     dim = dim if dim > 0 else self.ndim - 1
@@ -169,7 +170,11 @@ class array:
       return array(_mul(self.data, other.data), dtype=self.dtype)
     else:
       raise ValueError("shapes are incompatible for operation")
-    
+  
+  def __matmul__(self, other:List["array"]) -> List["array"]:
+    out = matmul(self.data, other.data)
+    return array(out, dtype=self.dtype)
+
   def __sub__(self, other:List["array"]) -> List["array"]:
     return self + (-other)
 

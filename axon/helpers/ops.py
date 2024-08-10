@@ -1,3 +1,6 @@
+from .shapes import transpose, get_shape
+from .utils import _zeros
+
 def mean_axis(data, axis, keepdims):
   if axis == 0:
     transposed = list(map(list, zip(*data)))
@@ -34,5 +37,22 @@ def sum_axis(data, axis, keepdims):
     mean_vals = [mean_vals]
   return mean_vals
 
-def matmul(data1, data2):
-  raise NotImplementedError("not implemented")
+def matmul(a, b):
+  def _remul(a, b):
+    if len(get_shape(a)) == 2 and len(get_shape(b)) == 2:
+      out = _zeros((len(a), len(b[0])))
+      b_t = transpose(b)
+      for i in range(len(a)):
+        for j in range(len(b_t)):
+          out[i][j] = sum(a[i][k] * b_t[j][k] for k in range(len(a[0])))
+      return out
+    else:
+      out_shape = get_shape(a)[:-1] + (get_shape(b)[-1],)
+      out = _zeros(out_shape)
+      for i in range(len(a)):
+        out[i] = _remul((a[i]), (b[i]))
+      return out
+
+  if get_shape(a)[-1] != get_shape(b)[-2]:
+    raise ValueError("Matrices have incompatible dimensions for matmul")
+  return _remul(a, b)
