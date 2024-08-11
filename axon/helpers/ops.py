@@ -84,3 +84,6 @@ def matmul(a, b):
   if get_shape(a)[-1] != get_shape(b)[-2]:
     raise ValueError("Matrices have incompatible dimensions for matmul")
   return _remul(a, b)
+
+def dot_prod(a, b):
+  raise NotImplementedError("not written")

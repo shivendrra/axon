@@ -28,7 +28,6 @@ class array:
   def __init__(self, *data:Union[List["array"], list, int, float], dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]=None) -> None:
     self.data = data[0] if len(data) == 1 and isinstance(data[0], list) else list(data)
     self.shape = self.shape()
-    self.size = tuple(get_shape(data))
     self.ndim = len(get_shape(data))
     self.dtype = array.int32 if dtype is None else dtype
     if dtype is not None:
@@ -113,6 +112,14 @@ class array:
   def F(self) -> List['array']:
     return array(flatten(self.data), dtype=self.dtype)
 
+  @property
+  def T(self) -> List['array']:
+    return array(transpose(self.data), dtype=self.dtype)
+  
+  @property
+  def size(self) -> tuple:
+    return tuple(get_shape(self.data))
+
   def flatten(self, start_dim:int=0, end_dim:int=-1) -> List['array']:
     start_dim = start_dim if start_dim > 0 else self.ndim - 1
     end_dim = end_dim if end_dim > 0 else self.ndim - 1
@@ -153,7 +160,7 @@ class array:
       self.data = handle_conversion(broadcast(self.data, target_shape), self.dtype)
       other.data = handle_conversion(broadcast(other.data, target_shape), other.dtype)
     
-    if self.shape == other.shape:
+    if self.size == other.size:
       return array(_add(self.data, other.data), dtype=self.dtype)
     else:
       raise ValueError("shapes are incompatible for operation")
@@ -172,7 +179,7 @@ class array:
       self.data = handle_conversion(broadcast(self.data, target_shape), self.dtype)
       other.data = handle_conversion(broadcast(other.data, target_shape), other.dtype)
 
-    if self.shape == other.shape:
+    if self.size == other.size:
       return array(_mul(self.data, other.data), dtype=self.dtype)
     else:
       raise ValueError("shapes are incompatible for operation")

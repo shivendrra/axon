@@ -38,16 +38,15 @@ def broadcast_shape(shape1:tuple, shape2:tuple) -> tuple:
   if shape1 == shape2:
     return shape1, False
   
-  else:
-    max_len = max(len(shape1), len(shape2))
-    shape1 = [1] * (max_len - len(shape1)) + shape1
-    shape2 = [1] * (max_len - len(shape2)) + shape2
+  max_len = max(len(shape1), len(shape2))
+  shape1 = [1] * (max_len - len(shape1)) + shape1
+  shape2 = [1] * (max_len - len(shape2)) + shape2
 
-    for dim1, dim2 in zip(shape1, shape2):
-      if dim1 != dim2 and dim2 != 1 and dim1 != 1:
-        raise ValueError(f"shape {shape1} and {shape2} are not compatible for broadcasting")
-      res_shape.append(dim1, dim2)
-    return res_shape, True
+  for dim1, dim2 in zip(shape1, shape2):
+    if dim1 != dim2 and dim1 != 1 and dim2 != 1:
+      raise ValueError(f"Shapes {shape1} and {shape2} are not compatible for broadcasting")
+    res_shape.append(max(dim1, dim2))
+  return tuple(res_shape), True
 
 def broadcast(array, target_shape):
   current_shape = get_shape(array)
@@ -55,9 +54,12 @@ def broadcast(array, target_shape):
     return array
 
   def expand_dims(array, current_shape, target_shape):
+    if not current_shape:
+      return array
+
     if len(current_shape) < len(target_shape):
       array = [array]
-      current_shape = [1,] + current_shape
+      current_shape = [1] + current_shape
     if current_shape == target_shape:
       return array
 
