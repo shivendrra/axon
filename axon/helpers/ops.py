@@ -1,6 +1,34 @@
 from .shapes import transpose, get_shape
 from .utils import _zeros
 
+def sum_axis0(data):
+  if not isinstance(data[0], list):
+    return sum(data)
+
+  result = []
+  for i in range(len(data[0])):
+    result.append(sum_axis0([d[i] for d in data]))
+  return result
+
+def mean_axis0(data):
+  if not isinstance(data[0], list):
+    return sum(data) / len(data)
+
+  result = []
+  for i in range(len(data[0])):
+    result.append(mean_axis0([d[i] for d in data]))
+  return result
+
+def var_axis0(data, ddof=0):
+  mean_values = mean_axis0(data)
+  if not isinstance(data[0], list):
+    return sum((x - mean_values) ** 2 for x in data) / (len(data) - ddof)
+
+  result = []
+  for i in range(len(data[0])):
+    result.append(var_axis0([d[i] for d in data], ddof))
+  return result
+
 def mean_axis(data, axis, keepdims):
   if axis == 0:
     transposed = list(map(list, zip(*data)))

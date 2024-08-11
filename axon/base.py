@@ -41,6 +41,12 @@ class array:
     def format_element(element):
       if isinstance(element, list):
         return [format_element(sub_element) for sub_element in element]
+      if self.dtype == int8 or self.dtype == int16 or self.dtype == int32 or self.dtype == int64 or self.dtype == long:
+        return f"{element:.0f}."
+      if self.dtype == float16:
+        return f"{element:.2f}"
+      if self.dtype == float32:
+        return f"{element:.3f}"
       return f"{element:.4f}"
 
     formatted_data = format_element(self.data)
@@ -301,10 +307,13 @@ class array:
       flat_array = flatten(self.data)
       mean_val = sum(flat_array) / len(flat_array)
       if keepdims:
-        return [[mean_val]]
+        out = [[mean_val]]
       return mean_val
+    if axis == 0:
+      out = mean_axis0(self.data)
     else:
-      return mean_axis(self.data, axis, keepdims)
+      out = mean_axis(self.data, axis, keepdims)
+    return array(out, dtype=self.dtype)
 
   def var(self, axis:Optional[int]=None, ddof:int=0, keepdims:bool=False) -> list[float]:
     if axis is None:
@@ -312,28 +321,35 @@ class array:
       mean_value = sum(flat_array) / len(flat_array)
       variance = sum((x - mean_value) ** 2 for x in flat_array) / (len(flat_array) - ddof)
       if keepdims:
-        return [[variance]]
+        out = [[variance]]
       return variance
+    if axis == 0:
+      out = var_axis0(self.data)
     else:
       mean_values = self.mean(axis=axis)
-      return var_axis(self.data, mean_values, axis, ddof, keepdims)
+      out = var_axis(self.data, mean_values, axis, ddof, keepdims)
+    return array(out, dtype=self.dtype)
 
   def std(self, axis:Optional[int]=None, ddof:int=0, keepdims:bool=False) -> list[float]:
-    variance = self.var(axis=axis, ddof=ddof, keepdims=keepdims)
+    variance = self.var(axis=axis, ddof=ddof, keepdims=keepdims).data
     def _std(var):
       if isinstance(var, list):
         return [_std(sub) for sub in var]
       return math.sqrt(var)
     if keepdims:
-      return [[math.sqrt(x)] for x in flatten(variance)]
+      out = [[math.sqrt(x)] for x in flatten(variance)]
     else:
-      return _std(variance)
+      out = _std(variance)
+    return array(out, dtype=self.dtype)
   
   def sum(self, axis:Optional[int]=None, keepdims:bool=False):
     if axis == None:
       if keepdims:
-        return [[sum(flatten(self.data))]]
+        out = [[sum(flatten(self.data))]]
       else:
-        return sum(flatten(self.data))
+        out = sum(flatten(self.data))
+    if axis == 0:
+      out = sum_axis0(self.data)
     else:
-      return sum_axis(self.data, axis, keepdims)
+      out = sum_axis(self.data, axis, keepdims)
+      return array(out, dtype=self.dtype)
