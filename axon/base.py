@@ -6,15 +6,15 @@ from .helpers.ops import *
 from copy import deepcopy
 import math
 
-int8 = 'int8'
-int16 = 'int16'
-int32 = 'int32'
-int64 = 'int64'
-long = 'long'
-float16 = 'float16'
-float32 = 'float32'
-float64 = 'float64'
-double = 'double'
+int8 = "int8"
+int16 = "int16"
+int32 = "int32"
+int64 = "int64"
+long = "long"
+float16 = "float16"
+float32 = "float32"
+float64 = "float64"
+double = "double"
 
 class array:
   int8 = int8
@@ -25,11 +25,9 @@ class array:
   float32 = float32
   float64 = float64 or double
 
-  def __init__(self, *data:Union[List["array"], list, int, float], dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]=None) -> None:
+  def __init__(self, *data:Union[List["array"], list, int, float], dtype:Optional[Literal["int8", "int16", "int32", "int64", "float16", "float32", "float64"]]=None) -> None:
     self.data = data[0] if len(data) == 1 and isinstance(data[0], list) else list(data)
     self.shape = self.shape()
-    self.size = tuple(get_shape(data))
-    self.ndim = len(get_shape(data))
     self.dtype = array.int32 if dtype is None else dtype
     if dtype is not None:
       self.data = handle_conversion(self.data, dtype)
@@ -41,18 +39,24 @@ class array:
     def format_element(element):
       if isinstance(element, list):
         return [format_element(sub_element) for sub_element in element]
+      if self.dtype == int8 or self.dtype == int16 or self.dtype == int32 or self.dtype == int64 or self.dtype == long:
+        return f"{element:.0f}."
+      if self.dtype == float16:
+        return f"{element:.2f}"
+      if self.dtype == float32:
+        return f"{element:.3f}"
       return f"{element:.4f}"
 
     formatted_data = format_element(self.data)
 
     def format_data(data, level=0):
       if isinstance(data[0], list):
-        inner = ',\n'.join(['\t' * (level + 1) + format_data(sub_data, level + 1) for sub_data in data])
-        return f"[\n{inner}\n" + '  ' * level + "]"
-      return "[" + ', '.join(data) + "]"
+        inner = ",\n".join(["\t" * (level + 1) + format_data(sub_data, level + 1) for sub_data in data])
+        return f"[\n{inner}\n" + "  " * level + "]"
+      return "[" + ", ".join(data) + "]"
 
     formatted_str = format_data(formatted_data, 0)
-    formatted_str = formatted_str.replace('\t', ' ')
+    formatted_str = formatted_str.replace("\t", " ")
     return f"array({formatted_str}, dtype={self.dtype})\n"
   
   def __getitem__(self, index:tuple):
@@ -80,14 +84,14 @@ class array:
     for item in self.data:
       yield item
   
-  def as_type(self, dtype:Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']) -> List['array']:
+  def as_type(self, dtype:Literal["int8", "int16", "int32", "int64", "float16", "float32", "float64"]) -> List["array"]:
     out = handle_conversion(self.data, dtype)
     return array(out, dtype=dtype)
   
   def tolist(self) -> list:
     return self.data
   
-  def copy(self) -> List['array']:
+  def copy(self) -> List["array"]:
     return array(deepcopy(self.data), dtype=self.dtype)
   
   def shape(self) -> list:
@@ -99,14 +103,28 @@ class array:
       out *= dim
     return out
   
-  def flatten(self, start_dim:int=0, end_dim:int=-1) -> List['array']:
-    start_dim = start_dim if start_dim > 0 else self.ndim - 1
-    end_dim = end_dim if end_dim > 0 else self.ndim - 1
-    
-    return array(flatten_recursive(self.data, start_dim, end_dim), dtype=self.dtype)
-  
-  def F(self) -> List['array']:
+  def transpose(self) -> List["array"]:
+    out = array(transpose(self.data), dtype=self.dtype)
+    return out
+
+  @property
+  def F(self) -> List["array"]:
     return array(flatten(self.data), dtype=self.dtype)
+
+  @property
+  def T(self) -> List["array"]:
+    return array(transpose(self.data), dtype=self.dtype)
+  
+  @property
+  def size(self) -> tuple:
+    return tuple(get_shape(self.data))
+  
+  @property
+  def ndim(self) -> int:
+    return len(get_shape(self.data))
+
+  def flatten(self, start_dim:int=0, end_dim:int=-1) -> List["array"]:
+    return array(flatten_recursive(self.data, start_dim, end_dim), dtype=self.dtype)
 
   def unsqueeze(self, dim:int=0):
     dim = dim if dim > 0 else self.ndim - 1
@@ -118,6 +136,10 @@ class array:
     dim = dim if dim > 0 else self.ndim - 1
     return array(squeeze(self.data, dim), dtype=self.dtype)
   
+  def reshape(self, new_shape:tuple) -> List["array"]:
+    out = reshape(self.data, new_shape)
+    return array(out, dtype=self.dtype)
+
   def clip(self, min_value, max_value):
     def _clip(data, min_value, max_value):
       if isinstance(data, list):
@@ -142,7 +164,7 @@ class array:
       self.data = handle_conversion(broadcast(self.data, target_shape), self.dtype)
       other.data = handle_conversion(broadcast(other.data, target_shape), other.dtype)
     
-    if self.shape == other.shape:
+    if self.size == other.size:
       return array(_add(self.data, other.data), dtype=self.dtype)
     else:
       raise ValueError("shapes are incompatible for operation")
@@ -161,11 +183,15 @@ class array:
       self.data = handle_conversion(broadcast(self.data, target_shape), self.dtype)
       other.data = handle_conversion(broadcast(other.data, target_shape), other.dtype)
 
-    if self.shape == other.shape:
+    if self.size == other.size:
       return array(_mul(self.data, other.data), dtype=self.dtype)
     else:
       raise ValueError("shapes are incompatible for operation")
-    
+  
+  def __matmul__(self, other:List["array"]) -> List["array"]:
+    out = matmul(self.data, other.data)
+    return array(out, dtype=self.dtype)
+
   def __sub__(self, other:List["array"]) -> List["array"]:
     return self + (-other)
 
@@ -286,16 +312,27 @@ class array:
       return array(broadcast(other.data, new_shape), dtype=self.dtype)
     else:
       return None
+  
+  def dot(self, other:List["array"]) -> List["array"]:
+    out = dot_product(self.data, other.data)
+    return array(out, dtype=self.dtype)
+  
+  def det(self) -> List["array"]:
+    out = determinant(self.data)
+    return array(out, dtype=self.dtype)
 
   def mean(self, axis:Optional[int]=None, keepdims:bool=False) -> list[float]:
     if axis is None:
       flat_array = flatten(self.data)
       mean_val = sum(flat_array) / len(flat_array)
       if keepdims:
-        return [[mean_val]]
+        out = [[mean_val]]
       return mean_val
+    if axis == 0:
+      out = mean_axis0(self.data)
     else:
-      return mean_axis(self.data, axis, keepdims)
+      out = mean_axis(self.data, axis, keepdims)
+    return array(out, dtype=self.dtype)
 
   def var(self, axis:Optional[int]=None, ddof:int=0, keepdims:bool=False) -> list[float]:
     if axis is None:
@@ -303,28 +340,35 @@ class array:
       mean_value = sum(flat_array) / len(flat_array)
       variance = sum((x - mean_value) ** 2 for x in flat_array) / (len(flat_array) - ddof)
       if keepdims:
-        return [[variance]]
+        out = [[variance]]
       return variance
+    if axis == 0:
+      out = var_axis0(self.data)
     else:
       mean_values = self.mean(axis=axis)
-      return var_axis(self.data, mean_values, axis, ddof, keepdims)
+      out = var_axis(self.data, mean_values, axis, ddof, keepdims)
+    return array(out, dtype=self.dtype)
 
   def std(self, axis:Optional[int]=None, ddof:int=0, keepdims:bool=False) -> list[float]:
-    variance = self.var(axis=axis, ddof=ddof, keepdims=keepdims)
+    variance = self.var(axis=axis, ddof=ddof, keepdims=keepdims).data
     def _std(var):
       if isinstance(var, list):
         return [_std(sub) for sub in var]
       return math.sqrt(var)
     if keepdims:
-      return [[math.sqrt(x)] for x in flatten(variance)]
+      out = [[math.sqrt(x)] for x in flatten(variance)]
     else:
-      return _std(variance)
+      out = _std(variance)
+    return array(out, dtype=self.dtype)
   
   def sum(self, axis:Optional[int]=None, keepdims:bool=False):
     if axis == None:
       if keepdims:
-        return [[sum(flatten(self.data))]]
+        out = [[sum(flatten(self.data))]]
       else:
-        return sum(flatten(self.data))
+        out = sum(flatten(self.data))
+    if axis == 0:
+      out = sum_axis0(self.data)
     else:
-      return sum_axis(self.data, axis, keepdims)
+      out = sum_axis(self.data, axis, keepdims)
+      return array(out, dtype=self.dtype)

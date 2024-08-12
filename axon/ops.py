@@ -121,19 +121,19 @@ def split(data:Union[array, list], idx:int, axis:Optional[int]=None) -> list:
       result.append(_get_slices(start_idx, end_idx, row))
     return [list(col) for col in zip(*result)]
   
-def mean(data, axis:Optional[int]=None, dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]=None, keepdims:bool=False) -> Union[list, float, int]:
+def mean(data:Union[array, list], axis:Optional[int]=None, dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]=None, keepdims:bool=False) -> Union[list, float, int]:
   data = data if isinstance(data, array) else array(data, dtype)
   return data.mean(axis=axis, keepdims=keepdims)
 
-def var(data, axis:Optional[int]=None, ddof:int=0, dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]=None, keepdims:bool=False) -> Union[list, float, int]:
+def var(data:Union[array, list], axis:Optional[int]=None, ddof:int=0, dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]=None, keepdims:bool=False) -> Union[list, float, int]:
   data = data if isinstance(data, array) else array(data, dtype)
   return data.var(axis=axis, ddof=ddof, keepdims=keepdims)
 
-def std(data, axis:Optional[int]=None, ddof:int=0, dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]=None, keepdims:bool=False) -> Union[list, float, int]:
+def std(data:Union[array, list], axis:Optional[int]=None, ddof:int=0, dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]=None, keepdims:bool=False) -> Union[list, float, int]:
   data = data if isinstance(data, array) else array(data, dtype)
   return data.std(axis=axis, ddof=ddof, keepdims=keepdims)
 
-def squeeze(*data, dim:int=0):
+def squeeze(*data, dim:int=0) -> array:
   for _data in data:
     if dim is not None and dim>=len(get_shape(_data)):
       dim = dim if dim > 0 else len(get_shape(_data)) - 1
@@ -146,10 +146,18 @@ def unsqueeze(*data, dim:int=0):
     dim = dim if dim > 0 else len(get_shape(_data)) - 1
     return unsqueeze(_data, dim)
 
-def clip(data, min, max, out=None):
+def clip(data:Union[array, list], min, max, out=None) -> array:
   data = data if isinstance(data, array) else array(data)
   if out is not None:
     return data.clip(min_value=min, max_value=max)
   else:
     out = data.clip(min_value=min, max_value=max)
     return out
+
+def reshape(data:Union[array, list], new_shape:tuple) ->array:
+  data = data if isinstance(data, array) else array(data)
+  return data.reshape(new_shape)
+
+def det(data:Union[array, list]) -> array:
+  data = data if isinstance(data, array) else array(data)
+  return data.det()

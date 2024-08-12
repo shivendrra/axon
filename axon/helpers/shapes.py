@@ -1,4 +1,5 @@
 from typing import *
+from .utils import _zeros
 
 def get_shape(data:list) -> list:
   if isinstance(data, list):
@@ -27,9 +28,6 @@ def flatten_recursive(data:list, start_dim:int=0, end_dim:int=-1) -> list:
 def transpose(data:list) -> list:
   return list(map(list, zip(*data)))
 
-def transpose_recursive(data:list, dim:int) -> list:
-  raise NotImplementedError("not written")
-
 def swap_axes(data:list, dim0:int, dim1:int, ndim:int, depth:int=0) -> list:
   if depth == ndim - 2:
     return [list(row) for row in zip(*data)]
@@ -41,16 +39,15 @@ def broadcast_shape(shape1:tuple, shape2:tuple) -> tuple:
   if shape1 == shape2:
     return shape1, False
   
-  else:
-    max_len = max(len(shape1), len(shape2))
-    shape1 = [1] * (max_len - len(shape1)) + shape1
-    shape2 = [1] * (max_len - len(shape2)) + shape2
+  max_len = max(len(shape1), len(shape2))
+  shape1 = [1] * (max_len - len(shape1)) + shape1
+  shape2 = [1] * (max_len - len(shape2)) + shape2
 
-    for dim1, dim2 in zip(shape1, shape2):
-      if dim1 != dim2 and dim2 != 1 and dim1 != 1:
-        raise ValueError(f"shape {shape1} and {shape2} are not compatible for broadcasting")
-      res_shape.append(dim1, dim2)
-    return res_shape, True
+  for dim1, dim2 in zip(shape1, shape2):
+    if dim1 != dim2 and dim1 != 1 and dim2 != 1:
+      raise ValueError(f"Shapes {shape1} and {shape2} are not compatible for broadcasting")
+    res_shape.append(max(dim1, dim2))
+  return tuple(res_shape), True
 
 def broadcast(array, target_shape):
   current_shape = get_shape(array)
@@ -58,9 +55,12 @@ def broadcast(array, target_shape):
     return array
 
   def expand_dims(array, current_shape, target_shape):
+    if not current_shape:
+      return array
+
     if len(current_shape) < len(target_shape):
       array = [array]
-      current_shape = [1,] + current_shape
+      current_shape = [1] + current_shape
     if current_shape == target_shape:
       return array
 
@@ -74,7 +74,33 @@ def broadcast(array, target_shape):
   return expand_dims(array, current_shape, target_shape)
 
 def reshape(data:list, new_shape:tuple) -> list:
-  raise NotImplementedError("Not yet written")
+  assert type(new_shape) == tuple, "new shape must be a tuple"
+  def _shape_numel(shape):
+    numel = 1
+    for ele in shape:
+      numel *= ele
+    return numel
+  
+  if _shape_numel(new_shape) != _shape_numel(get_shape(data)):
+    raise ValueError(f"Shapes {new_shape} & {get_shape(data)} incompatible for reshaping")
+  else:
+    def _reshape(data, new_shape):
+      flatten_data = flatten(data)
+      target = _zeros(shape=new_shape)
+      idx = [0]
+
+      def __populate(target, shape):
+        if len(shape) == 1:
+          for i in range(shape[0]):
+            target[i] = flatten_data[idx[0]]
+            idx[0] += 1
+        else:
+          for i in range(shape[0]):
+            __populate(target[i], shape[1:])
+
+      __populate(target, list(new_shape))
+      return target
+  return _reshape(data, new_shape)
 
 def unsqueeze(data, dim=0):
   if dim == 0:
