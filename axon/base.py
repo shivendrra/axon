@@ -6,15 +6,15 @@ from .helpers.ops import *
 from copy import deepcopy
 import math
 
-int8 = 'int8'
-int16 = 'int16'
-int32 = 'int32'
-int64 = 'int64'
-long = 'long'
-float16 = 'float16'
-float32 = 'float32'
-float64 = 'float64'
-double = 'double'
+int8 = "int8"
+int16 = "int16"
+int32 = "int32"
+int64 = "int64"
+long = "long"
+float16 = "float16"
+float32 = "float32"
+float64 = "float64"
+double = "double"
 
 class array:
   int8 = int8
@@ -25,7 +25,7 @@ class array:
   float32 = float32
   float64 = float64 or double
 
-  def __init__(self, *data:Union[List["array"], list, int, float], dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]=None) -> None:
+  def __init__(self, *data:Union[List["array"], list, int, float], dtype:Optional[Literal["int8", "int16", "int32", "int64", "float16", "float32", "float64"]]=None) -> None:
     self.data = data[0] if len(data) == 1 and isinstance(data[0], list) else list(data)
     self.shape = self.shape()
     self.dtype = array.int32 if dtype is None else dtype
@@ -51,12 +51,12 @@ class array:
 
     def format_data(data, level=0):
       if isinstance(data[0], list):
-        inner = ',\n'.join(['\t' * (level + 1) + format_data(sub_data, level + 1) for sub_data in data])
-        return f"[\n{inner}\n" + '  ' * level + "]"
-      return "[" + ', '.join(data) + "]"
+        inner = ",\n".join(["\t" * (level + 1) + format_data(sub_data, level + 1) for sub_data in data])
+        return f"[\n{inner}\n" + "  " * level + "]"
+      return "[" + ", ".join(data) + "]"
 
     formatted_str = format_data(formatted_data, 0)
-    formatted_str = formatted_str.replace('\t', ' ')
+    formatted_str = formatted_str.replace("\t", " ")
     return f"array({formatted_str}, dtype={self.dtype})\n"
   
   def __getitem__(self, index:tuple):
@@ -84,14 +84,14 @@ class array:
     for item in self.data:
       yield item
   
-  def as_type(self, dtype:Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']) -> List['array']:
+  def as_type(self, dtype:Literal["int8", "int16", "int32", "int64", "float16", "float32", "float64"]) -> List["array"]:
     out = handle_conversion(self.data, dtype)
     return array(out, dtype=dtype)
   
   def tolist(self) -> list:
     return self.data
   
-  def copy(self) -> List['array']:
+  def copy(self) -> List["array"]:
     return array(deepcopy(self.data), dtype=self.dtype)
   
   def shape(self) -> list:
@@ -103,16 +103,16 @@ class array:
       out *= dim
     return out
   
-  def transpose(self) -> List['array']:
+  def transpose(self) -> List["array"]:
     out = array(transpose(self.data), dtype=self.dtype)
     return out
 
   @property
-  def F(self) -> List['array']:
+  def F(self) -> List["array"]:
     return array(flatten(self.data), dtype=self.dtype)
 
   @property
-  def T(self) -> List['array']:
+  def T(self) -> List["array"]:
     return array(transpose(self.data), dtype=self.dtype)
   
   @property
@@ -123,7 +123,7 @@ class array:
   def ndim(self) -> int:
     return len(get_shape(self.data))
 
-  def flatten(self, start_dim:int=0, end_dim:int=-1) -> List['array']:
+  def flatten(self, start_dim:int=0, end_dim:int=-1) -> List["array"]:
     return array(flatten_recursive(self.data, start_dim, end_dim), dtype=self.dtype)
 
   def unsqueeze(self, dim:int=0):
@@ -136,7 +136,7 @@ class array:
     dim = dim if dim > 0 else self.ndim - 1
     return array(squeeze(self.data, dim), dtype=self.dtype)
   
-  def reshape(self, new_shape:tuple) -> List['array']:
+  def reshape(self, new_shape:tuple) -> List["array"]:
     out = reshape(self.data, new_shape)
     return array(out, dtype=self.dtype)
 
@@ -312,6 +312,14 @@ class array:
       return array(broadcast(other.data, new_shape), dtype=self.dtype)
     else:
       return None
+  
+  def dot(self, other:List["array"]) -> List["array"]:
+    out = dot_product(self.data, other.data)
+    return array(out, dtype=self.dtype)
+  
+  def det(self) -> List["array"]:
+    out = determinant(self.data)
+    return array(out, dtype=self.dtype)
 
   def mean(self, axis:Optional[int]=None, keepdims:bool=False) -> list[float]:
     if axis is None:

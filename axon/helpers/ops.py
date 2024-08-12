@@ -85,5 +85,70 @@ def matmul(a, b):
     raise ValueError("Matrices have incompatible dimensions for matmul")
   return _remul(a, b)
 
-def dot_prod(a, b):
-  raise NotImplementedError("not written")
+def dot_product(a, b):
+  def dot_product_1d(v1, v2):
+    if len(v1) != len(v2):
+      raise ValueError("Vectors must have the same length")
+    return sum(x * y for x, y in zip(v1, v2))
+
+  def dot_product_2d(m1, m2):
+    if len(m1[0]) != len(m2):
+      raise ValueError("Incompatible dimensions for matrix multiplication")
+    result = [[0] * len(m2[0]) for _ in range(len(m1))]
+    for i in range(len(m1)):
+      for j in range(len(m2[0])):
+        result[i][j] = sum(m1[i][k] * m2[k][j] for k in range(len(m2)))
+    return result
+
+  if isinstance(a[0], list) and isinstance(b[0], list):
+    if len(a[0]) == len(b):
+      return dot_product_2d(a, b)
+    else:
+      raise ValueError("Incompatible dimensions for 2-D dot product")
+  elif isinstance(a[0], list) or isinstance(b[0], list):
+    if isinstance(a[0], list):
+      if len(a[0]) == len(b):
+        return [sum(x * y for x, y in zip(row, b)) for row in a]
+      else:
+        raise ValueError("Incompatible dimensions for 2-D and 1-D dot product")
+    else:
+      if len(a) == len(b):
+        return [sum(x * y for x, y in zip(a, row)) for row in b]
+      else:
+        raise ValueError("Incompatible dimensions for 1-D and 2-D dot product")
+  else:
+    if len(a) != len(b):
+      raise ValueError("Vectors must have the same length")
+    return dot_product_1d(a, b)
+
+def determinant(data):
+  def minor(matrix, row, col):
+    """Calculate the minor of the matrix after removing the specified row and column."""
+    return [row[:col] + row[col+1:] for row in (matrix[:row] + matrix[row+1:])]
+
+  def determinant_2d(matrix):
+    """Calculate the determinant of a 2x2 matrix."""
+    if len(matrix) != 2 or len(matrix[0]) != 2:
+      raise ValueError("Matrix must be 2x2")
+    return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]
+
+  def determinant_nd(matrix):
+    n = len(matrix)
+    if n == 2:
+      return determinant_2d(matrix)
+    elif n == 1:
+      return matrix[0][0]
+    elif n == 0:
+      return 1
+    
+    det = 0
+    for c in range(n):
+      det += ((-1) ** c) * matrix[0][c] * determinant_nd(minor(matrix, 0, c))
+    return det
+
+  if not data:
+    raise ValueError("Matrix is empty")
+  if not all(len(row) == len(data) for row in data):
+    raise ValueError("Matrix must be square (number of rows must equal number of columns)")
+
+  return determinant_nd(data)
