@@ -28,7 +28,6 @@ class array:
   def __init__(self, *data:Union[List["array"], list, int, float], dtype:Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']]=None) -> None:
     self.data = data[0] if len(data) == 1 and isinstance(data[0], list) else list(data)
     self.shape = self.shape()
-    self.ndim = len(get_shape(data))
     self.dtype = array.int32 if dtype is None else dtype
     if dtype is not None:
       self.data = handle_conversion(self.data, dtype)
@@ -119,11 +118,12 @@ class array:
   @property
   def size(self) -> tuple:
     return tuple(get_shape(self.data))
+  
+  @property
+  def ndim(self) -> int:
+    return len(get_shape(self.data))
 
   def flatten(self, start_dim:int=0, end_dim:int=-1) -> List['array']:
-    start_dim = start_dim if start_dim > 0 else self.ndim - 1
-    end_dim = end_dim if end_dim > 0 else self.ndim - 1
-    
     return array(flatten_recursive(self.data, start_dim, end_dim), dtype=self.dtype)
 
   def unsqueeze(self, dim:int=0):
@@ -136,6 +136,10 @@ class array:
     dim = dim if dim > 0 else self.ndim - 1
     return array(squeeze(self.data, dim), dtype=self.dtype)
   
+  def reshape(self, new_shape:tuple) -> List['array']:
+    out = reshape(self.data, new_shape)
+    return array(out, dtype=self.dtype)
+
   def clip(self, min_value, max_value):
     def _clip(data, min_value, max_value):
       if isinstance(data, list):

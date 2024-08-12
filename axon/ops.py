@@ -153,3 +153,7 @@ def clip(data, min, max, out=None):
   else:
     out = data.clip(min_value=min, max_value=max)
     return out
+
+def reshape(data, new_shape):
+  data = data if isinstance(data, array) else array(data)
+  return data.reshape(new_shape)

@@ -1,4 +1,5 @@
 from typing import *
+from .utils import _zeros
 
 def get_shape(data:list) -> list:
   if isinstance(data, list):
@@ -73,7 +74,33 @@ def broadcast(array, target_shape):
   return expand_dims(array, current_shape, target_shape)
 
 def reshape(data:list, new_shape:tuple) -> list:
-  raise NotImplementedError("Not yet written")
+  assert type(new_shape) == tuple, "new shape must be a tuple"
+  def _shape_numel(shape):
+    numel = 1
+    for ele in shape:
+      numel *= ele
+    return numel
+  
+  if _shape_numel(new_shape) != _shape_numel(get_shape(data)):
+    raise ValueError(f"Shapes {new_shape} & {get_shape(data)} incompatible for reshaping")
+  else:
+    def _reshape(data, new_shape):
+      flatten_data = flatten(data)
+      target = _zeros(shape=new_shape)
+      idx = [0]
+
+      def __populate(target, shape):
+        if len(shape) == 1:
+          for i in range(shape[0]):
+            target[i] = flatten_data[idx[0]]
+            idx[0] += 1
+        else:
+          for i in range(shape[0]):
+            __populate(target[i], shape[1:])
+
+      __populate(target, list(new_shape))
+      return target
+  return _reshape(data, new_shape)
 
 def unsqueeze(data, dim=0):
   if dim == 0:
