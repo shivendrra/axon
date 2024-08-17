@@ -6,7 +6,7 @@ from typing import *
 def matmul(a:Union[array, list], b:Union[array, list]) -> array:
   a = a if isinstance(a, array) else array(a)
   b = b if isinstance(b, array) else array(b)
-  return (a @ b).data
+  return (a @ b)
 
 def dot(a:Union[array, list], b:Union[array, list]) -> array:
   a = a if isinstance(a, array) else array(a)
@@ -136,14 +136,14 @@ def std(data:Union[array, list], axis:Optional[int]=None, ddof:int=0, dtype:Opti
 def squeeze(*data, dim:int=0) -> array:
   for _data in data:
     if dim is not None and dim>=len(get_shape(_data)):
-      dim = dim if dim > 0 else len(get_shape(_data)) - 1
+      dim = dim if dim > 0 else len(get_shape(_data)) + dim
       raise IndexError(f"Dimension out of range (expected to be in range of {len(get_shape(_data))} dimensions)")
     else:
       return squeeze(_data, dim)
 
 def unsqueeze(*data, dim:int=0):
   for _data in data:
-    dim = dim if dim > 0 else len(get_shape(_data)) - 1
+    dim = dim if dim > 0 else len(get_shape(_data)) + dim
     return unsqueeze(_data, dim)
 
 def clip(data:Union[array, list], min, max, out=None) -> array:
@@ -154,10 +154,14 @@ def clip(data:Union[array, list], min, max, out=None) -> array:
     out = data.clip(min_value=min, max_value=max)
     return out
 
-def reshape(data:Union[array, list], new_shape:tuple) ->array:
+def reshape(data:Union[array, list], new_shape:tuple) -> array:
   data = data if isinstance(data, array) else array(data)
   return data.reshape(new_shape)
 
 def det(data:Union[array, list]) -> array:
   data = data if isinstance(data, array) else array(data)
   return data.det()
+
+def swap_axes(data:Union[array, list], axis1:int, axis2:int) -> array:
+  data = data if isinstance(data, array) else array(data)
+  return data.swap_axes(axis1, axis2)

@@ -126,14 +126,20 @@ class array:
   def flatten(self, start_dim:int=0, end_dim:int=-1) -> List["array"]:
     return array(flatten_recursive(self.data, start_dim, end_dim), dtype=self.dtype)
 
+  def swap_axes(self, axis1:int, axis2:int) -> List["array"]:
+    axis1 = self.ndim + axis1 if axis1 < 0 else axis1
+    axis2 = self.ndim + axis2 if axis2 < 0 else axis2
+    print(axis1, axis2)
+    return array(swap_axes(self.data, axis1, axis2), dtype=self.dtype)
+
   def unsqueeze(self, dim:int=0):
-    dim = dim if dim > 0 else self.ndim - 1
+    dim = dim if dim > 0 else self.ndim + dim
     return array(unsqueeze(self.data, dim), dtype=self.dtype)
   
   def squeeze(self, dim:int=0):
     if dim is not None and dim>=self.ndim:
       raise IndexError(f"Dimension out of range (expected to be in range of {self.ndim} dimensions)")
-    dim = dim if dim > 0 else self.ndim - 1
+    dim = dim if dim > 0 else self.ndim + dim
     return array(squeeze(self.data, dim), dtype=self.dtype)
   
   def reshape(self, new_shape:tuple) -> List["array"]:
@@ -225,6 +231,7 @@ class array:
       return math.pow(data, pow)
 
     return array(_pow(self.data, pow), dtype=array.float32)
+
   def relu(self) -> List["array"]:
     def _apply(data):
       if isinstance(data, list):
