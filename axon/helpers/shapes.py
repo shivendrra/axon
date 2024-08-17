@@ -28,12 +28,6 @@ def flatten_recursive(data:list, start_dim:int=0, end_dim:int=-1) -> list:
 def transpose(data:list) -> list:
   return list(map(list, zip(*data)))
 
-def swap_axes(data:list, dim0:int, dim1:int, ndim:int, depth:int=0) -> list:
-  if depth == ndim - 2:
-    return [list(row) for row in zip(*data)]
-  else:
-    return [swap_axes(sub_data, dim0, dim1, ndim, depth+1) for sub_data in data]
-
 def broadcast_shape(shape1:tuple, shape2:tuple) -> tuple:
   res_shape = []
   if shape1 == shape2:
@@ -102,7 +96,7 @@ def reshape(data:list, new_shape:tuple) -> list:
       return target
   return _reshape(data, new_shape)
 
-def unsqueeze(data, dim=0):
+def unsqueeze(data:list, dim:int=0) -> list:
   if dim == 0:
     return [item for sublist in data for item in unsqueeze(sublist)] if isinstance(data, list) else [data]
   else:
@@ -110,7 +104,7 @@ def unsqueeze(data, dim=0):
       return [unsqueeze(d, dim-1) for d in data]
     return [data]
 
-def squeeze(data, dim):
+def squeeze(data:list, dim:Union[int, None]) -> list:
   if dim is None:
     if isinstance(data, list):
       squeezed = [squeeze(d, None) for d in data]
@@ -121,3 +115,21 @@ def squeeze(data, dim):
       return data[0] if len(data) == 1 else data
     return [squeeze(d, dim - 1) for d in data]
   return data
+
+def swap_axes(array:list, axis1:int, axis2:int) -> list:
+  def recursive_swap(sub_array, depth):
+    if depth == min(axis1, axis2):
+      sub_array = [list(x) for x in zip(*sub_array)]
+    if depth == max(axis1, axis2) - 1:
+      return sub_array
+    return [recursive_swap(sub, depth + 1) for sub in sub_array]
+
+  ndim = len(get_shape(array))
+
+  if axis1 < 0 or axis2 < 0 or axis1 >= ndim or axis2 >= ndim:
+    raise ValueError("Axis out of bounds")
+
+  if axis1 == axis2:
+    return array
+
+  return recursive_swap(array, 0)

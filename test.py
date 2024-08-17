@@ -1,21 +1,26 @@
+import timeit
 import axon
+import numpy as np
 
-data = [
-  [[1, 2], [3, 4], [5, 6]],
-  [[7, 8], [9, 10], [11, 12]],
-  [[13, 14], [15, 16], [17, 18]]
-]
+# Generate random matrices
+a_axon = axon.randn(shape=(200, 200))
 
-a_1d = [1, 2, 3]
-b_1d = [4, 5, 6]
+# Measure timeit for axon matrix multiplication
+start_timeit_axon = timeit.default_timer()
+result_axon = axon.matmul(a_axon, a_axon)
+end_timeit_axon = timeit.default_timer()
 
-a_2d = [[1, 2, 3], [4, 5, 6]]
-b_2d = [[7, 8], [9, 10], [11, 12]]
+# Measure timeit for numpy matrix multiplication
+start_timeit_numpy = timeit.default_timer()
+result_numpy = np.matmul(a_axon, a_axon)
+end_timeit_numpy = timeit.default_timer()
 
-a, b = axon.array(a_1d), axon.array(b_1d)
-print(a.dot(b))
-print(axon.dot(a, b))
+# Print the results
+print("Axon matmul result:")
+print(result_axon.shape)
 
-a, b = axon.array(a_2d), axon.array(b_2d)
-print(a.dot(b))
-print(axon.dot(a, b))
+print("\nNumpy matmul result:")
+print(result_numpy.shape)
+
+print("\ntimeit taken by Axon matmul: {:.6f} seconds".format(end_timeit_axon - start_timeit_axon))
+print("timeit taken by Numpy matmul: {:.6f} seconds".format(end_timeit_numpy - start_timeit_numpy))
