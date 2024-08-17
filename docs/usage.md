@@ -1,171 +1,375 @@
 # User Documentation
 
-User Guide to use Axon library like NumPy. It has almost all the functions that NumPy has and works in a similar way too, anyway, the guide is here:
+The `array` class provides a flexible and powerful way to handle multi-dimensional arrays, similar to NumPy's `ndarray`. This document serves as a user guide, covering initialization and the various methods available for manipulating arrays.
 
-## Initializing Array:
-Import the axon library or `axon.base` to initialize array.
+## Table of Contents
 
-```python
-import axon
+1. [Initialization](#initialization)
+2. [Methods](#methods)
+   - [as_type](#as_type)
+   - [tolist](#tolist)
+   - [copy](#copy)
+   - [shape](#shape)
+   - [numel](#numel)
+   - [transpose](#transpose)
+   - [flatten](#flatten)
+   - [swap_axes](#swap_axes)
+   - [unsqueeze](#unsqueeze)
+   - [squeeze](#squeeze)
+   - [reshape](#reshape)
+   - [clip](#clip)
+   - [Binary Operations](#binary-operations)
+   - [Activation Functions](#activation-functions)
+   - [Broadcasting](#broadcast)
+   - [Dot Product](#dot)
+   - [Determinant](#det)
+   - [Mean](#mean)
+   - [Variance](#var)
+   - [Standard Deviation](#std)
+   - [Sum](#sum)
 
-a = [[1, 4, 5], [1, 4, 5]]
-a = axon.array(a, dtype=axon.int64)
-print(a) # output: array([1, 4, 5], [1, 4, 5], dtype=int64)
-```
+---
 
-### Class properties & attributes:
-Use attributes mentioned below in the same manner to display properties inherited by the array like: `shape`, `size`, `ndim` & `dtype`
-```python
-print(a.data) # output: [[1, 4, 5], [1, 4, 5]]
-print(a.shape) # output: [2, 3]
-print(a.size()) # output: (2, 3)
-print(a.ndim) # output: 2
-print(a.dtype) # output: int64
-```
+## Initialization
 
-## Unary Operations:
-Carry out various unary operations with this library:
+### Creating an Array
 
-#### Sum:
-Returns the sum of all elements in the array, axis wise & all total.
-```python
-import axon
-
-a = axon.array([[1, 4, 5], [1, 4, 5]], dtype=axon.int64)
-print(a.sum()) # output: array(20, dtype=int64)
-print(a.sum(axis=0)) # output: array([2, 8, 10], dtype=int64)
-print(a.sum(axis=1)) # output: array([10, 10], dtype=int64)
-```
-
-#### Numel:
-Returns the total number of elements in the array:
-```python
-a = axon.array([[1, 4, 5], [1, 4, 5]], dtype=axon.int64)
-print(a.numel()) # output: 6
-```
-
-#### Transpose:
-Returns an array that is a transposed version of `input`. The given dims `dim0` and `dim1` are swapped. Two ways to transpose an array:
-```python
-import axon
-
-a = [[[1, 4, 5], [0, 4, 2]], [[3, 3, -5], [0, -4, 15]]]
-a = axon.array(a, dtype=axon.int64)
-print(a.T()) # ouptut: array([[[1, 4, 5], [3, 3, -5]], [[0, 4, 2], [0, -4, 15]]], dtype=int64)
-print(a.transpose(0, -1)) # output: array([[[1, 0], [4, 4], [5, 2]], [[3, 0], [3, -4], [-5, 15]]], dtype=int64)
-```
-
-#### Flatten:
-Returns a copy of the array collapsed into one dim. Array can be flatten in two different ways. First is the simple flattening i.e. flatten whole n-dim array into a 1-d array and other is along the axis.
+To initialize an `array` object, you can pass data directly as a list or a set of parameters. Optionally, you can specify the data type (`dtype`).
 
 ```python
-import axon
-a = [[[1, 4, 5], [0, 4, 2]], [[3, 3, -5], [0, -4, 15]]]
-a = axon.array(a, dtype=axon.int32)
+from your_module import array
 
-print(a.F()) # output: [1, 4, 5, 0, 4, 2, 3, 3, -5, 0, -4, 15]
-print(a.flatten()) # output: [[1, 4, 5, 0, 4, 2, 3, 3, -5, 0, -4, 15]]
-print(a.flatten(1, -1)) # output: [[[1, 4, 5, 0, 4, 2], [3, 3, -5, 0, -4, 15]]]
+# Example: Initialize a 2D array
+a = array([[1, 2, 3], [4, 5, 6]], dtype="int32")
+
+# Example: Initialize an array with a single value
+b = array(5, dtype="float32")
 ```
 
-#### Un-squeeze:
-Returns a new array with a dim of size one inserted at the specified position.
-```python
-import axon
-a = [[[1, 4, 5], [0, 4, 2]], [[3, 3, -5], [0, -4, 15]]]
-a = axon.array(a, dtype=axon.int32)
+---
 
-print(a.unsqueeze()) # output: array([[1, 4, 5, 0, 4, 2, 3, 3, -5, 0, -4, 15]], dtype=int32)
-print(a.unsqueeze(dim=1)) # output: array([[1, 4, 5, 0, 4, 2], [3, 3, -5, 0, -4, 15]], dtype=int32)
-print(a.unsqueeze(dim=-1)) # output: array([[[[1], [4], [5]], [[0], [4], [2]]], [[[3], [3], [-5]], [[0], [-4], [15]]]], dtype=int32)
-```
+## Methods
 
-#### Squeeze:
-Squeezing removes axes/dim of one from the array.
-```python
-import axon
-a = [[[1, 4, 5], [0, 4, 2]]]
-a = axon.array(a, dtype=axon.int32)
+### as_type
 
-print(a.squeeze()) # outptut: array([[1, 4, 5], [0, 4, 2]], dtype=int32)
-print(a.squeeze(dim=1)) # output: array([[[1, 4, 5], [0, 4, 2]]], dtype=int32)
-print(a.squeeze(dim=2)) # output: array([[[1, 4, 5], [0, 4, 2]]], dtype=int32)
-```
+Converts the array to a specified data type.
 
-## Mathematical Operations:
+- **Parameters:**
+  - `dtype` (str): The target data type, e.g., `"int8"`, `"float32"`.
+  
+- **Example:**
 
-#### Mean:
-Returns the mean/array containing means along the axis or in total.
-```python
-import axon
-a = [[[1, 4, 5], [0, 4, 2]], [[1, 4, 5], [0, 4, 2]]]
-a = axon.array(a, dtype=axon.int32)
+  ```python
+  c = a.as_type("float64")
+  ```
 
-print(a.mean()) # output: 2.6666666666666665
-print(a.mean(axis=0)) # output: [[1.0, 4.0, 5.0], [0.0, 4.0, 2.0]]
-print(a.mean(axis=1)) # output: [[0.5, 4.0, 3.5], [0.5, 4.0, 3.5]]
-```
+### tolist
 
-#### Variance:
-Returns the mean/array containing means along the axis or in total.
-```python
-import axon
-a = [[[1, 4, 5], [0, 4, 2]], [[1, 4, 5], [0, 4, 2]]]
-a = axon.array(a, dtype=axon.int32)
+Converts the array to a standard Python list.
 
-print(a.var()) # output: 3.222222222222222
-print(a.var(axis=0)) # output: [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-print(a.var(axis=1)) # output: [[0.25, 0.0, 2.25], [0.25, 0.0, 2.25]]
-```
+- **Example:**
 
-#### Standard Deviation:
-Returns the mean/array containing means along the axis or in total.
-```python
-import axon
-a = [[[1, 4, 5], [0, 4, 2]], [[1, 4, 5], [0, 4, 2]]]
-a = axon.array(a, dtype=axon.int32)
+  ```python
+  list_representation = a.tolist()
+  ```
 
-print(a.std()) # output: 1.7950549357115013
-print(a.std(axis=0)) # output: [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-print(a.std(axis=1)) # output: [[0.5, 0.0, 1.5], [0.5, 0.0, 1.5]]
-```
+### copy
 
-#### Activations:
-Applies different kinds of activation functions on the arrays and returns new array.
-```python
-import axon
-a = [[[1, 4, 5], [0, 4, 2]], [[1, 4, 5], [0, 4, 2]]]
-a = axon.array(a, dtype=axon.int32)
+Creates a deep copy of the array.
 
-print(a.tanh()) # output: array([[[0.7615941762924194, 0.9993293285369873, 0.9999092221260071], [0.0, 0.9993293285369873, 0.9640275835990906]], [[0.7615941762924194, 0.9993293285369873, 0.9999092221260071], [0.0, 0.9993293285369873, 0.9640275835990906]]], dtype=float32)
-print(a.relu()) # output: array([[[1.0, 4.0, 5.0], [0.0, 4.0, 2.0]], [[1.0, 4.0, 5.0], [0.0, 4.0, 2.0]]], dtype=float32)
-print(a.sigmoid()) # output: array([[[0.7310585975646973, 0.9820137619972229, 0.9933071732521057], [0.5, 0.9820137619972229, 0.8807970881462097]], [[0.7310585975646973, 0.9820137619972229, 0.9933071732521057], [0.5, 0.9820137619972229, 0.8807970881462097]]], dtype=float32)
-print(a.gelu()) # output: array([[[0.8411920070648193, 3.999929666519165, 5.0], [0.0, 3.999929666519165, 1.9545977115631104]], [[0.8411920070648193, 3.999929666519165, 5.0], [0.0, 3.999929666519165, 1.9545977115631104]]], dtype=float32)
-```
+- **Example:**
 
-## Binary Operations:
+  ```python
+  d = a.copy()
+  ```
 
-#### Addition/Subtraction:
-Adds or subtracts two arrays or one array & int and returns a new array.
-```python
-import axon
+### shape
 
-a = axon.array([[[1, 4, 5], [0, 4, 2]], [[1, 4, 5], [0, 4, 2]]], dtype=axon.int32)
-b = axon.array([[[0, -4, 1], [2, 0, -3]], [[-9, -2, 15], [2, -4, 1]]], dtype=axon.int32)
+Returns the shape of the array as a list.
 
-print(a + b) # output: array([[[1, 0, 6], [2, 4, -1]], [[-8, 2, 20], [2, 0, 3]]], dtype=int32)
-print(a - b) # output: array([[[1, 8, 4], [-2, 4, 5]], [[10, 6, -10], [-2, 8, 1]]], dtype=int32)
-```
+- **Example:**
 
-#### Multiplication/Division:
-Multiplies or divides two arrays or one array & int and returns a new array.
-```python
-import axon
+  ```python
+  array_shape = a.shape
+  ```
 
-a = axon.array([[[1, 4, 5], [0, 4, 2]], [[1, 4, 5], [0, 4, 2]]], dtype=axon.int32)
-b = axon.array([[[0, -4, 1], [2, 0, -3]], [[-9, -2, 15], [2, -4, 1]]], dtype=axon.int32)
+### numel
 
-print(a * b) # output: array([[[0, -16, 5], [0, 0, -6]], [[-9, -8, 75], [0, -16, 2]]], dtype=int32)
-print(a / b) # output: array([[[0, -1, 5], [0, 0, 0]], [[0, -2, 0], [0, -1, 2]]], dtype=int32)
-```
+Returns the total number of elements in the array.
 
+- **Example:**
+
+  ```python
+  num_elements = a.numel()
+  ```
+
+### transpose
+
+Transposes the array (swaps rows and columns).
+
+- **Example:**
+
+  ```python
+  e = a.transpose()
+  ```
+
+### flatten
+
+Flattens the array into a 1D list.
+
+- **Parameters:**
+  - `start_dim` (int, optional): The first dimension to flatten.
+  - `end_dim` (int, optional): The last dimension to flatten.
+  
+- **Example:**
+
+  ```python
+  flat_array = a.flatten()
+  ```
+
+### swap_axes
+
+Swaps two axes in the array.
+
+- **Parameters:**
+  - `axis1` (int): The first axis.
+  - `axis2` (int): The second axis.
+  
+- **Example:**
+
+  ```python
+  swapped_array = a.swap_axes(0, 1)
+  ```
+
+### unsqueeze
+
+Adds a new dimension of size 1 at the specified position.
+
+- **Parameters:**
+  - `dim` (int, optional): The position where the new dimension should be added.
+  
+- **Example:**
+
+  ```python
+  expanded_array = a.unsqueeze(dim=0)
+  ```
+
+### squeeze
+
+Removes dimensions of size 1 from the array.
+
+- **Parameters:**
+  - `dim` (int, optional): The dimension to be squeezed.
+  
+- **Example:**
+
+  ```python
+  squeezed_array = a.squeeze(dim=0)
+  ```
+
+### reshape
+
+Reshapes the array to a new shape.
+
+- **Parameters:**
+  - `new_shape` (tuple): The target shape.
+  
+- **Example:**
+
+  ```python
+  reshaped_array = a.reshape((3, 2))
+  ```
+
+### clip
+
+Clips the array values to be within the specified range.
+
+- **Parameters:**
+  - `min_value` (float): The minimum value.
+  - `max_value` (float): The maximum value.
+  
+- **Example:**
+
+  ```python
+  clipped_array = a.clip(0, 5)
+  ```
+
+---
+
+### Binary Operations
+
+#### Addition
+
+Adds two arrays element-wise.
+
+- **Example:**
+
+  ```python
+  f = a + b
+  ```
+
+#### Multiplication
+
+Multiplies two arrays element-wise.
+
+- **Example:**
+
+  ```python
+  g = a * b
+  ```
+
+#### Matrix Multiplication
+
+Performs matrix multiplication between two arrays.
+
+- **Example:**
+
+  ```python
+  h = a @ b
+  ```
+
+#### Subtraction
+
+Subtracts one array from another element-wise.
+
+- **Example:**
+
+  ```python
+  i = a - b
+  ```
+
+#### Division
+
+Divides one array by another element-wise.
+
+- **Example:**
+
+  ```python
+  j = a / b
+  ```
+
+### Activation Functions
+
+#### ReLU
+
+Applies the ReLU activation function element-wise.
+
+- **Example:**
+
+  ```python
+  relu_array = a.relu()
+  ```
+
+#### Tanh
+
+Applies the Tanh activation function element-wise.
+
+- **Example:**
+
+  ```python
+  tanh_array = a.tanh()
+  ```
+
+#### Sigmoid
+
+Applies the Sigmoid activation function element-wise.
+
+- **Example:**
+
+  ```python
+  sigmoid_array = a.sigmoid()
+  ```
+
+### Broadcasting
+
+Broadcasts one array to the shape of another.
+
+- **Parameters:**
+  - `other` (array): The target array.
+  
+- **Example:**
+
+  ```python
+  broadcasted_array = a.broadcast(b)
+  ```
+
+### Dot Product
+
+Computes the dot product of two arrays.
+
+- **Parameters:**
+  - `other` (array): The target array.
+  
+- **Example:**
+
+  ```python
+  dot_product = a.dot(b)
+  ```
+
+### Determinant
+
+Computes the determinant of the array.
+
+- **Example:**
+
+  ```python
+  determinant = a.det()
+  ```
+
+### Mean
+
+Computes the mean of the array elements along the specified axis.
+
+- **Parameters:**
+  - `axis` (int, optional): The axis along which the mean is computed.
+  - `keepdims` (bool, optional): Whether to keep the reduced dimensions.
+  
+- **Example:**
+
+  ```python
+  mean_value = a.mean(axis=0)
+  ```
+
+### Variance
+
+Computes the variance of the array elements along the specified axis.
+
+- **Parameters:**
+  - `axis` (int, optional): The axis along which the variance is computed.
+  - `ddof` (int, optional): Delta degrees of freedom.
+  - `keepdims` (bool, optional): Whether to keep the reduced dimensions.
+  
+- **Example:**
+
+  ```python
+  variance_value = a.var(axis=0)
+  ```
+
+### Standard Deviation
+
+Computes the standard deviation of the array elements along the specified axis.
+
+- **Parameters:**
+  - `axis` (int, optional): The axis along which the standard deviation is computed.
+  - `ddof` (int, optional): Delta degrees of freedom.
+  - `keepdims` (bool, optional): Whether to keep the reduced dimensions.
+  
+- **Example:**
+
+  ```python
+  std_value = a.std(axis=0)
+  ```
+
+### Sum
+
+Computes the sum of the array elements along the specified axis.
+
+- **Parameters:**
+  - `axis` (int, optional): The axis along which the sum is computed.
+  - `keepdims` (bool, optional): Whether to keep the reduced dimensions.
+  
+- **Example:**
+
+  ```python
+  sum_value = a.sum(axis=0)
+  ```

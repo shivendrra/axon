@@ -129,7 +129,6 @@ class array:
   def swap_axes(self, axis1:int, axis2:int) -> List["array"]:
     axis1 = self.ndim + axis1 if axis1 < 0 else axis1
     axis2 = self.ndim + axis2 if axis2 < 0 else axis2
-    print(axis1, axis2)
     return array(swap_axes(self.data, axis1, axis2), dtype=self.dtype)
 
   def unsqueeze(self, dim:int=0):
