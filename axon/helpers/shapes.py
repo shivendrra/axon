@@ -116,25 +116,20 @@ def squeeze(data:list, dim:Union[int, None]) -> list:
     return [squeeze(d, dim - 1) for d in data]
   return data
 
-def swap_axes(array: list, axis1: int, axis2: int) -> list:
-    def recursive_swap(sub_array, current_axis):
-        if current_axis == min(axis1, axis2):
-            sub_array = [list(x) for x in zip(*sub_array)]
-        if current_axis == max(axis1, axis2) - 1:
-            return sub_array
-        return [recursive_swap(sub, current_axis + 1) for sub in sub_array]
+def swap_axes(array:list, axis1:int, axis2:int) -> list:
+  def recursive_swap(sub_array, depth):
+    if depth == min(axis1, axis2):
+      sub_array = [list(x) for x in zip(*sub_array)]
+    if depth == max(axis1, axis2) - 1:
+      return sub_array
+    return [recursive_swap(sub, depth + 1) for sub in sub_array]
 
-    ndim = len(get_shape(array))
+  ndim = len(get_shape(array))
 
-    if axis1 < 0:
-        axis1 += ndim
-    if axis2 < 0:
-        axis2 += ndim
+  if axis1 < 0 or axis2 < 0 or axis1 >= ndim or axis2 >= ndim:
+    raise ValueError("Axis out of bounds")
 
-    if axis1 >= ndim or axis2 >= ndim:
-        raise ValueError("Axis out of bounds")
+  if axis1 == axis2:
+    return array
 
-    if axis1 == axis2:
-        return array
-
-    return recursive_swap(array, 0)
+  return recursive_swap(array, 0)
