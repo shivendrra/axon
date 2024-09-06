@@ -1,9 +1,9 @@
 import torch
-from axon.micro import value
+from axon.micro import scalar
 
 def test_sanity_check():
 
-  x = value(-4.0)
+  x = scalar(-4.0)
   z = 2 * x + 2 + x
   q = z.relu() + z * x
   h = (z * z).relu()
