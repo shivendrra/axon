@@ -165,3 +165,15 @@ def det(data:Union[array, list]) -> array:
 def swap_axes(data:Union[array, list], axis1:int, axis2:int) -> array:
   data = data if isinstance(data, array) else array(data)
   return data.swap_axes(axis1, axis2)
+
+def exp(data:Union[array, list]) -> array:
+  data = data if isinstance(data, array) else array(data)
+  return data.exp()
+
+def sum(data:Union[array, list], axis:Optional[int]=None, keepdims:bool=False) -> array:
+  data = data if isinstance(data, array) else array(data)
+  return data.sum(axis=axis, keepdims=keepdims)
+
+def log(data:Union[array, list]) -> array:
+  data = data if isinstance(data, array) else array(data)
+  return data.log()

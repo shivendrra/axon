@@ -49,16 +49,26 @@ class array:
 
     formatted_data = format_element(self.data)
 
+    def truncate_list(data, max_items=8):
+      if len(data) > max_items:
+        return data[:max_items // 2] + ['...'] + data[-max_items // 2:]
+      return data
+
     def format_data(data, level=0):
       if isinstance(data[0], list):
-        inner = ",\n".join(["\t" * (level + 1) + format_data(sub_data, level + 1) for sub_data in data])
+        if len(data) > 8:
+          data = truncate_list(data)  # Truncate rows if there are more than 8 arrays
+        inner = ",\n".join(["  " * (level + 1) + format_data(sub_data, level + 1) for sub_data in data])
         return f"[\n{inner}\n" + "  " * level + "]"
-      return "[" + ", ".join(data) + "]"
+      else:
+        # Truncate individual row elements if they exceed 8
+        data = truncate_list(data)
+        return "[" + ", ".join(data) + "]"
 
     formatted_str = format_data(formatted_data, 0)
     formatted_str = formatted_str.replace("\t", " ")
     return f"array({formatted_str}, dtype={self.dtype})\n"
-  
+
   def __getitem__(self, index:tuple):
     if isinstance(index, tuple):
       data = self.data
@@ -129,7 +139,7 @@ class array:
   def swap_axes(self, axis1:int, axis2:int) -> List["array"]:
     axis1 = self.ndim + axis1 if axis1 < 0 else axis1
     axis2 = self.ndim + axis2 if axis2 < 0 else axis2
-    return array(swap_axes(self.data, axis1, axis2), dtype=self.dtype)
+    return array( swap_axes(self.data, axis1, axis2), dtype=self.dtype)
 
   def unsqueeze(self, dim:int=0):
     dim = dim if dim > 0 else self.ndim + dim
@@ -172,6 +182,7 @@ class array:
     if self.size == other.size:
       return array(_add(self.data, other.data), dtype=self.dtype)
     else:
+      print(self.size, other.size)
       raise ValueError("shapes are incompatible for operation")
 
   def __mul__(self, other:List["array"]) -> List["array"]:
@@ -198,10 +209,42 @@ class array:
     return array(out, dtype=self.dtype)
 
   def __sub__(self, other:List["array"]) -> List["array"]:
-    return self + (-other)
+    other = other if isinstance(other, array) else array(other, dtype=self.dtype)
+    def _sub(a, b):
+      if isinstance(a, list):
+        return [_sub(_a, _b) for _a, _b in zip(a, b)]
+      else:
+        return a + b
+
+    target_shape, requires_broadcasting = broadcast_shape(self.shape, other.shape)
+    
+    if requires_broadcasting:
+      self.data = handle_conversion(broadcast(self.data, target_shape), self.dtype)
+      other.data = handle_conversion(broadcast(other.data, target_shape), other.dtype)
+    
+    if self.size == other.size:
+      return array(_sub(self.data, other.data), dtype=self.dtype)
+    else:
+      raise ValueError("shapes are incompatible for operation")
 
   def __rsub__(self, other:List["array"]) -> List["array"]:
-    return other + (-self)
+    other = other if isinstance(other, array) else array(other, dtype=self.dtype)
+    def _sub(a, b):
+      if isinstance(a, list):
+        return [_sub(_a, _b) for _a, _b in zip(a, b)]
+      else:
+        return a + b
+
+    target_shape, requires_broadcasting = broadcast_shape(self.shape, other.shape)
+    
+    if requires_broadcasting:
+      self.data = handle_conversion(broadcast(self.data, target_shape), self.dtype)
+      other.data = handle_conversion(broadcast(other.data, target_shape), other.dtype)
+    
+    if self.size == other.size:
+      return array(_sub(other.data, self.data), dtype=self.dtype)
+    else:
+      raise ValueError("shapes are incompatible for operation")
   
   def __rmul__(self, other:List["array"]) -> List["array"]:
     return other * self
@@ -230,6 +273,14 @@ class array:
       return math.pow(data, pow)
 
     return array(_pow(self.data, pow), dtype=array.float32)
+  
+  def exp(self) -> List["array"]:
+    def _exp(data):
+      if isinstance(data, list):
+        return [_exp(d) for d in data]
+      return math.exp(data)
+
+    return array(_exp(self.data), dtype=array.float32)
 
   def relu(self) -> List["array"]:
     def _apply(data):
@@ -327,7 +378,7 @@ class array:
     out = determinant(self.data)
     return array(out, dtype=self.dtype)
 
-  def mean(self, axis:Optional[int]=None, keepdims:bool=False) -> list[float]:
+  def mean(self, axis:Optional[int]=None, keepdims:bool=False) -> List["array"]:
     if axis is None:
       flat_array = flatten(self.data)
       mean_val = sum(flat_array) / len(flat_array)
@@ -340,7 +391,7 @@ class array:
       out = mean_axis(self.data, axis, keepdims)
     return array(out, dtype=self.dtype)
 
-  def var(self, axis:Optional[int]=None, ddof:int=0, keepdims:bool=False) -> list[float]:
+  def var(self, axis:Optional[int]=None, ddof:int=0, keepdims:bool=False) -> List["array"]:
     if axis is None:
       flat_array = flatten(self.data)
       mean_value = sum(flat_array) / len(flat_array)
@@ -355,7 +406,7 @@ class array:
       out = var_axis(self.data, mean_values, axis, ddof, keepdims)
     return array(out, dtype=self.dtype)
 
-  def std(self, axis:Optional[int]=None, ddof:int=0, keepdims:bool=False) -> list[float]:
+  def std(self, axis:Optional[int]=None, ddof:int=0, keepdims:bool=False) -> List["array"]:
     variance = self.var(axis=axis, ddof=ddof, keepdims=keepdims).data
     def _std(var):
       if isinstance(var, list):
@@ -367,14 +418,25 @@ class array:
       out = _std(variance)
     return array(out, dtype=self.dtype)
   
-  def sum(self, axis:Optional[int]=None, keepdims:bool=False):
+  def sum(self, axis:Optional[int]=None, keepdims:bool=False) -> List["array"]:
     if axis == None:
       if keepdims:
         out = [[sum(flatten(self.data))]]
       else:
         out = sum(flatten(self.data))
-    if axis == 0:
+    elif axis == 0:
       out = sum_axis0(self.data)
     else:
       out = sum_axis(self.data, axis, keepdims)
-      return array(out, dtype=self.dtype)
+    return array(out, dtype=self.dtype)
+  
+  def log(self) -> List["array"]:
+    def _log_element(element):
+      if isinstance(element, list):
+        return [_log_element(sub_element) for sub_element in element]
+      else:
+        if element <= 0:
+          raise ValueError(f"Logarithm undefined for non-positive values: {element}")
+        return math.log(element)
+
+    return array(_log_element(self.data), dtype=self.dtype)

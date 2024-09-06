@@ -1,5 +1,4 @@
-from .shapes import transpose, get_shape
-from .utils import _zeros
+from .shapes import transpose, get_shape, broadcast, broadcast_shape
 
 def sum_axis0(data):
   if not isinstance(data[0], list):
@@ -65,25 +64,29 @@ def sum_axis(data, axis, keepdims):
     mean_vals = [mean_vals]
   return mean_vals
 
-def matmul(a, b):
-  def _remul(a, b):
-    if len(get_shape(a)) == 2 and len(get_shape(b)) == 2:
-      out = _zeros((len(a), len(b[0])))
-      b_t = transpose(b)
-      for i in range(len(a)):
-        for j in range(len(b_t)):
-          out[i][j] = sum(a[i][k] * b_t[j][k] for k in range(len(a[0])))
-      return out
-    else:
-      out_shape = get_shape(a)[:-1] + (get_shape(b)[-1],)
-      out = _zeros(out_shape)
-      for i in range(len(a)):
-        out[i] = _remul((a[i]), (b[i]))
-      return out
+def matmul(A, B):
+  def matmul_2d(A, B):
+    assert len(A[0]) == len(B), "Incompatible dimensions for matrix multiplication"
+    result = [[0] * len(B[0]) for _ in range(len(A))]
 
-  if get_shape(a)[-1] != get_shape(b)[-2]:
-    raise ValueError("Matrices have incompatible dimensions for matmul")
-  return _remul(a, b)
+    for i in range(len(A)):
+      for j in range(len(B[0])):
+        for k in range(len(B)):
+          result[i][j] += A[i][k] * B[k][j]
+          
+    return result
+
+  if len(get_shape(A)) == 2 and len(get_shape(B)) == 2:
+    return matmul_2d(A, B)
+
+  target_shape, _ = broadcast_shape(get_shape(A), get_shape(B), ops="<MATMUL>")
+  A = broadcast(A, target_shape)
+  B = broadcast(B, target_shape)
+
+  if len(get_shape(A)) > 2 or len(get_shape(B)) > 2:
+    return [matmul(a, b) for a, b in zip(A, B)]
+  
+  return matmul_2d(A, B)
 
 def dot_product(a, b):
   def dot_product_1d(v1, v2):

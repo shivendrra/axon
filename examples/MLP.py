@@ -63,60 +63,54 @@ mlp.train(X, Y, iters=1000, learning_rate=0.1)
 ## MLP written in axon
 
 import axon
-import math
+from axon import array
 
 class MLP:
-  def __init__(self, _in, _out, _hidden) -> None:
-    self.wei1 = axon.array(axon.randn(shape=(_in, _hidden)), dtype=axon.float32)
-    self.b1 = axon.array(axon.zeros(shape=(1, _hidden)), dtype=axon.float32)
-    self.wei2 = axon.array(axon.randn(shape=(_hidden, _out)), dtype=axon.float32)
-    self.b2 = axon.array(axon.zeros(shape=(1, _out)), dtype=axon.float32)
+  def __init__(self, _in, _hid, _out, bias=False) -> None:
+    self.w1 = array(axon.randn(shape=(_hid, _in)), dtype=axon.float32)
+    self.b1 = array(axon.zeros(shape=(_hid, 1)))
+    self.w2 = array(axon.randn(shape=(_out, _hid)), dtype=axon.float32)
+    self.b2 = array(axon.zeros(shape=(_out, 1)))
   
-  def forward(self, X):
-    self.out1 = X @ self.wei1 + self.b1
-    self.out2 = self.sigmoid(self.out1)
-    self.out3 = self.out2 @ self.wei2 + self.b2
-    self.out4 = self.sigmoid(self.out3)
-    return self.out4
+  def forward(self, x):
+    self.Z1 = axon.dot(self.w1, x) + self.b1
+    self.A1 = self.Z1.sigmoid()
+    self.Z2 = axon.dot(self.w2, self.A1) + self.b2
+    self.A2 = self.Z2.sigmoid()
+    return self.A2
   
-  def sigmoid(self, z):
-    return axon.array([[1 / (1 + math.exp(-val)) for val in row] for row in z])
-  
-  def sigmoid_derivative(self, z):
-    return z * (1 - z)
-
   def backward(self, X, Y, lr):
     m = X.shape[1]
 
-    dZ2 = self.out4 - Y
-    dW2 = (self.wei1 @ dZ2) * (1/m)
-    db2 = dZ2.sum(axis=1, keepdims=True) * (1/ m)
+    dz2 = self.A2 - Y
+    dw2 = axon.dot(dz2, self.A1.T) * (1 / m)
+    db2 = axon.sum(dz2, axis=1, keepdims=True) * (1 / m)
+    
+    da1 = axon.dot(self.w2.T, dz2)
+    dz1 = da1 * self.A1.sigmoid_derivative()
+    dw1 = axon.dot(dz1, X.T) * (1 / m)
+    db1 = axon.sum(dz1, axis=1, keepdims=True) * (1 / m)
 
-    dA1 = (dZ2 @ self.wei2.T)
-    dZ1 = dA1 * self.out1.sigmoid_derivative()
-    dW1 = dZ1 @ X.T * (1/m)
-    db1 = dZ1.sum(axis=1, keepdim=True) * (1/m)
-
-    self.wei1 -= lr * dW1
-    self.b1 -= lr * db1
-    self.wei2 -= lr * dW2
-    self.b2 -= lr * db2
+    self.w1 = self.w1 + (dw1 * -lr)
+    # self.b1 = self.b1 + (db1 * -lr)
+    self.w2 = self.w2 + (dw2 * -lr)
+    # self.b2 = self.b2 + (db2 * -lr)
   
   def train(self, X, Y, iters, lr):
     for i in range(iters):
       output = self.forward(X)
       self.backward(X, Y, lr)
       if i % 100 == 0:
-        loss = self.cal_loss(Y, output)
-        print(f"iter: {i}, loss: {loss}")
-  
-  def cal_loss(self, Y, output):
+        loss = self.calculate_loss(Y, output)
+        print(f"Iter: {i}, loss: {loss.data[0]:.4f}")
+    
+  def calculate_loss(self, Y, output):
     m = Y.shape[1]
-    loss = -((Y * output.log()) + ((1-Y) * (1 - output).log())).sum() / m
+    loss = ((Y - output) ** 2 / m).sum()
     return loss
 
-X = axon.array(axon.randn(shape=(2, 4)), dtype=axon.float32)
-Y = axon.array([axon.randint(-5, 5, size=10) for _ in range(1)], dtype=axon.float32)
-mlp = MLP(4, 10, 2)
-out = mlp.forward(X)
-mlp.train(X, Y, iters=1000, lr=0.1)
+X = array(axon.randn(shape=(2, 100)), dtype='float32')
+Y = (axon.sum(X, axis=0).reshape((1, 100)))
+
+mlp = MLP(2, 10, 1)
+mlp.train(X, Y, iters=2000, lr=0.01)

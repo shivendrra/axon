@@ -26,7 +26,57 @@ def flatten_recursive(data:list, start_dim:int=0, end_dim:int=-1) -> list:
   return _recurse_flatten(data, 0)
 
 def transpose(data:list) -> list:
-  return list(map(list, zip(*data)))
+  def fill_transposed(original, transposed, current_indices):
+    """Recursively fill the transposed array."""
+    if not isinstance(original, list):
+      transposed_ref = transposed
+      for i in range(len(current_indices) - 1):
+        transposed_ref = transposed_ref[current_indices[::-1][i]]
+      transposed_ref[current_indices[::-1][-1]] = original
+      return
+
+    for i in range(len(original)):
+      fill_transposed(original[i], transposed, current_indices + [i])
+
+  if not data or not isinstance(data, list):
+    raise ValueError("Input must be a non-empty n-dimensional list.")
+  
+  shape = get_shape(data)
+  transposed_shape = shape[::-1]
+  transposed = _zeros(transposed_shape)
+  fill_transposed(data, transposed, [])
+  
+  return transposed
+
+def swap_axes(array:list, axis1:int, axis2:int) -> list:
+  def fill_swapped(original, swapped, axis1, axis2, indices):
+    """Recursively fill the swapped array."""
+    if not isinstance(original, list):
+      swapped_ref = swapped
+      for i in range(len(indices) - 1):
+        swapped_ref = swapped_ref[indices[i] if i not in [axis1, axis2] else indices[axis2 if i == axis1 else axis1]]
+      swapped_ref[indices[-1] if len(indices) - 1 not in [axis1, axis2] else indices[axis2 if len(indices) - 1 == axis1 else axis1]] = original
+      return
+
+    for i in range(len(original)):
+      fill_swapped(original[i], swapped, axis1, axis2, indices + [i])
+
+  if not array or not isinstance(array, list):
+    raise ValueError("Input must be a non-empty n-dimensional list.")
+  
+  shape = get_shape(array)
+  ndim = len(shape)
+  
+  if axis1 >= ndim or axis2 >= ndim:
+    raise ValueError(f"Axes {axis1} and {axis2} are out of bounds for array of dimension {ndim}.")
+  
+  new_shape = shape[:]
+  new_shape[axis1], new_shape[axis2] = new_shape[axis2], new_shape[axis1]
+  
+  swapped = _zeros(new_shape)
+  fill_swapped(array, swapped, axis1, axis2, [])
+  
+  return swapped
 
 def broadcast_shape(shape1:tuple, shape2:tuple) -> tuple:
   res_shape = []
@@ -71,30 +121,51 @@ def reshape(data:list, new_shape:tuple) -> list:
   assert type(new_shape) == tuple, "new shape must be a tuple"
   def _shape_numel(shape):
     numel = 1
-    for ele in shape:
-      numel *= ele
+    for dim in shape:
+        numel *= dim
     return numel
-  
-  if _shape_numel(new_shape) != _shape_numel(get_shape(data)):
-    raise ValueError(f"Shapes {new_shape} & {get_shape(data)} incompatible for reshaping")
-  else:
-    def _reshape(data, new_shape):
-      flatten_data = flatten(data)
-      target = _zeros(shape=new_shape)
-      idx = [0]
 
-      def __populate(target, shape):
-        if len(shape) == 1:
-          for i in range(shape[0]):
-            target[i] = flatten_data[idx[0]]
-            idx[0] += 1
-        else:
-          for i in range(shape[0]):
-            __populate(target[i], shape[1:])
+  if not isinstance(new_shape, tuple):
+    raise ValueError("new_shape must be a tuple")
 
-      __populate(target, list(new_shape))
-      return target
-  return _reshape(data, new_shape)
+  def unflatten(flat, shape):
+    if len(shape) == 1:
+      return flat[:shape[0]]
+    size = shape[0]
+    return [unflatten(flat[i*int(len(flat)/size):(i+1)*int(len(flat)/size)], shape[1:]) for i in range(size)]
+
+  def infer_shape(shape, total_size):
+    """Infer the missing dimension represented by -1."""
+    if shape.count(-1) > 1:
+      raise ValueError("Only one dimension can be -1")
+      
+    unknown_dim = shape.index(-1) if -1 in shape else None
+    known_dims = [dim for dim in shape if dim != -1]
+      
+    known_size = 1
+    for dim in known_dims:
+      known_size *= dim
+      
+    if unknown_dim is not None:
+      inferred_size = total_size // known_size
+      if inferred_size * known_size != total_size:
+        raise ValueError(f"Cannot reshape array to shape {shape}")
+      shape = list(shape)
+      shape[unknown_dim] = inferred_size
+      
+    return shape
+
+  original_size = _shape_numel(get_shape(data))
+  new_shape = infer_shape(new_shape, original_size)
+  new_size = _shape_numel(new_shape)
+
+  if original_size != new_size:
+    raise ValueError(f"Cannot reshape array of size {original_size} to shape {new_shape}")
+
+  flat_data = flatten(data)
+  reshaped_data = unflatten(flat_data, new_shape)
+    
+  return reshaped_data
 
 def unsqueeze(data:list, dim:int=0) -> list:
   if dim == 0:
@@ -115,21 +186,3 @@ def squeeze(data:list, dim:Union[int, None]) -> list:
       return data[0] if len(data) == 1 else data
     return [squeeze(d, dim - 1) for d in data]
   return data
-
-def swap_axes(array:list, axis1:int, axis2:int) -> list:
-  def recursive_swap(sub_array, depth):
-    if depth == min(axis1, axis2):
-      sub_array = [list(x) for x in zip(*sub_array)]
-    if depth == max(axis1, axis2) - 1:
-      return sub_array
-    return [recursive_swap(sub, depth + 1) for sub in sub_array]
-
-  ndim = len(get_shape(array))
-
-  if axis1 < 0 or axis2 < 0 or axis1 >= ndim or axis2 >= ndim:
-    raise ValueError("Axis out of bounds")
-
-  if axis1 == axis2:
-    return array
-
-  return recursive_swap(array, 0)
