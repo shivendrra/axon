@@ -4,14 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "axon-pypi"
-version = "1.0.0"
+version = "1.0.1"
 description = "Multi-dimensional array creation & manipulation library like numpy written from scratch in Python along with a scalar level autograd engine written in C/C++ with Python wrapper"
 readme = "README.md"
 license = {text = "MIT"}
 authors = [{name = "shivendra", email = "shivharsh44@gmail.com"}]
 dependencies = []
 classifiers = [
-  "Development Status :: 1 - Production/Stable",
+  "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Developers",
   "Programming Language :: C",
   "Programming Language :: C++",
