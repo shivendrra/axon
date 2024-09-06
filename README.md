@@ -25,6 +25,14 @@ git clone https://github.com/shivendrra/axon.git
 cd axon
 ```
 
+or
+
+Install via pip:
+
+```bash
+pip install axon-pypi
+```
+
 ## Usage
 
 You can use this similar to micrograd to build a simple neural network or do scalar level backprop.
@@ -33,11 +41,12 @@ You can use this similar to micrograd to build a simple neural network or do sca
 #### Axon.array
 
 ```python
-from axon.base import array
+import axon
+from axon import array
 
 # Create two 2D arrays
-a = array([[1, 2], [3, 4]], dtype='int32')
-b = array([[5, 6], [7, 8]], dtype='int32')
+a = array([[1, 2], [3, 4]], dtype=axon.int32)
+b = array([[5, 6], [7, 8]], dtype=axon.int32)
 
 # Addition
 c = a + b
@@ -65,16 +74,17 @@ Matrix Multiplication:
 
 anyway, prefer documentation for detailed usage guide:
 
-1. [axon.doc](https://github.com/shivendrra/axon/blob/main/docs/axon.md): for development purpose
-2. [usage.doc](https://github.com/shivendrra/axon/blob/main/docs/usage.md): for using it like numpy
+1. [axon.md](https://github.com/shivendrra/axon/blob/main/docs/axon.md): for development purpose
+2. [usage.md](https://github.com/shivendrra/axon/blob/main/docs/usage.md): for using it like numpy
+3. [axon_micro.md]((https://github.com/shivendrra/axon/blob/main/docs/axon_micro.md)): for axon.micro i.e. scalar autograd engine
 
 #### Axon.micro
 ```python
 
-from axon.micro import value
+from axon.micro import scalar
 
-a = value(2)
-b = value(3)
+a = scalar(2)
+b = scalar(3)
 
 c = a + b
 d = a * b
@@ -123,10 +133,11 @@ git push origin my-feature-branch
 
 ## Testing
 
-To run the unit tests you will have to install PyTorch, which the tests use as a reference for verifying the correctness of the calculated gradients. Then simply:
+To run the unit tests you will have to install PyTorch & Numpy, which the tests use as a reference for verifying the correctness of the calculated gradients & calculated values. Then simply run each file according to your prefrence:
 
 ```shell
-python -m pytest
+python -m tests/test_array.py # for testing the axon functions with numpy
+python -m tests/test_micro.py # for testing the axon.micro functions with pytorch
 ```
 
 ## Contributing

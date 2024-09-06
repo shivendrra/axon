@@ -1,56 +1,45 @@
+from setuptools import setup, find_packages
 import os
-import sys
-import platform
-import subprocess
-from setuptools import setup, Extension
-from setuptools.command.build_ext import build_ext
+import codecs
 
-class CMakeExtension(Extension):
-    def __init__(self, name, sourcedir=''):
-        Extension.__init__(self, name, sources=[])
-        self.sourcedir = os.path.abspath(sourcedir)
+current_dir = os.path.abspath(os.path.dirname(__file__))
 
-class CMakeBuild(build_ext):
-    def run(self):
-        try:
-            out = subprocess.check_output(['cmake', '--version'])
-        except OSError:
-            raise RuntimeError("CMake must be installed to build the following extensions: " + ", ".join(e.name for e in self.extensions))
-        for ext in self.extensions:
-            self.build_extension(ext)
+with codecs.open(os.path.join(current_dir, "README.md"), encoding="utf-8") as file:
+  long_description = file.read()
 
-    def build_extension(self, ext):
-        extdir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
-        cmake_args = [
-            '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + extdir,
-            '-DPYTHON_EXECUTABLE=' + sys.executable
-        ]
-        build_args = ['--config', 'Release']
+VERSION = '1.0.1'
+DESCRIPTION = 'Multi-dimensional array creation & manipulation library like numpy written from scratch in python along with a scalar level autograd engine written in C/C++ with python wrapper'
+lib_path = os.path.join(current_dir, 'axon', 'micro', 'libscalar.so')
 
-        if platform.system() == "Windows":
-            cmake_args += ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE=' + extdir]
-            if sys.maxsize > 2**32:
-                cmake_args += ['-A', 'x64']
-            build_args += ['--', '/m']
-        else:
-            build_args += ['--', '-j2']
-
-        env = os.environ.copy()
-        env['CXXFLAGS'] = '{} -DVERSION_INFO=\\"{}\\"'.format(
-            env.get('CXXFLAGS', ''), self.distribution.get_version())
-        if not os.path.exists(self.build_temp):
-            os.makedirs(self.build_temp)
-        subprocess.check_call(['cmake', ext.sourcedir] + cmake_args, cwd=self.build_temp, env=env)
-        subprocess.check_call(['cmake', '--build', '.'] + build_args, cwd=self.build_temp)
+if not os.path.exists(lib_path):
+  raise FileNotFoundError(f"Shared library {lib_path} not found. Please compile the C++ code to generate libscalar.so")
 
 setup(
-    name='engine',
-    version='0.1',
-    author='shivendrra',
-    author_email='shivharsh44@gmail.com',
-    description='A scalar value autograd engine written in C/C++',
-    long_description='',
-    ext_modules=[CMakeExtension('engine', sourcedir='.')],
-    cmdclass=dict(build_ext=CMakeBuild),
-    zip_safe=False,
+  name="axon-pypi",
+  version=VERSION,
+  author="shivendra",
+  author_email="shivharsh44@gmail.com",
+  description=DESCRIPTION,
+  long_description=long_description,
+  long_description_content_type="text/markdown",
+  license="MIT",
+  packages=find_packages(),
+  classifiers=[
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Programming Language :: C",
+    "Programming Language :: C++",
+    "Programming Language :: Python :: 3.11",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: MIT License",
+  ],
+  package_data={
+    'axon.micro': ['libscalar.so'],
+  },
+  entry_points={
+    'console_scripts': [
+      'axon=axon.__main__:main',
+    ],
+  }
 )

@@ -76,23 +76,24 @@ rnn = SimpleRNN(input_size=5, hidden_size=10, output_size=2)
 rnn.train(inputs, targets, iters=100, learning_rate=0.001)
 
 import axon
+from axon import array
 
 class RNN:
   def __init__(self, _in, _hidden, _out) -> None:
     self.hidden_size = _hidden
-    self.Wxh = axon.randn(shape=(_hidden, _in))
-    self.Whh = axon.randn(shape=(_hidden, _hidden))
-    self.Why = axon.randn(shape=(_out, _hidden))
-    self.bh = axon.zeros(_hidden, 1)
-    self.by = axon.zeros(_out, 1)
+    self.Wxh = array(axon.randn(shape=(_hidden, _in)), dtype=axon.float32)
+    self.Whh = array(axon.randn(shape=(_hidden, _hidden)), dtype=axon.float32)
+    self.Why = array(axon.randn(shape=(_out, _hidden)), dtype=axon.float32)
+    self.bh = array(axon.zeros((_hidden, 1)), dtype=axon.float32)
+    self.by = array(axon.zeros((_out, 1)), dtype=axon.float32)
   
   def forward(self, input):
-    h_prev = axon.zeros((self.hidden_size, 1))
+    h_prev = array(axon.zeros((self.hidden_size, 1)), dtype=axon.float32)
     self.last_hs = { -1: h_prev }
     
     for t, x in enumerate(input):
-      x = x.reshape(-1, 1)
-      h_prev = ((self.Wxh @ x) + (self.Whh @ h_prev) + self.bh)
+      x = axon.array(x).reshape((-1, 1))
+      h_prev = (axon.dot(self.Wxh, x) + axon.dot(self.Whh, h_prev) + self.bh).tanh()
       self.last_hs[t] = h_prev
     
     y = (self.Why @ h_prev) + self.by

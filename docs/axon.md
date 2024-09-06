@@ -1,580 +1,348 @@
-# Axon Library Documentation
+# **User Documentation: `array` Class**
 
-## Overview
-The `axon` library provides a custom implementation of a multidimensional array similar to NumPy arrays, with various utility functions for array manipulation, mathematical operations, and common functional operations. It includes the main `array` class and utility functions for array creation and manipulation.
+The `array` class is designed as a flexible and efficient multidimensional array structure with various functionalities including element-wise operations, mathematical functions, and tensor manipulations. Below are details on how to use this class.
 
-## Installation
-To use the `axon` library, include the `axon` directory in your project and import the necessary modules.
+---
 
+## **Class Initialization**
+
+### **Constructor**
 ```python
-from axon.base import array
-from axon.utils import *
+array(*data, dtype=None)
+```
+- **Parameters**:
+  - `data`: A list, another `array` object, or a set of integers/floats representing the array's elements.
+  - `dtype` (optional): Specifies the data type of the array. Valid types include: `int8`, `int16`, `int32`, `int64`, `float16`, `float32`, `float64`.
+
+- **Example**:
+  ```python
+  a = array([1, 2, 3, 4], dtype="int32")
+  ```
+
+---
+
+## **Array Representation**
+
+### `__repr__` and `__str__`
+- These methods allow easy printing and debugging of the array by showing a well-formatted string output with the array's contents.
+
+- **Example**:
+  ```python
+  a = array([1, 2, 3])
+  print(a)  # array([1., 2., 3.], dtype=int32)
+  ```
+
+---
+
+## **Array Properties**
+
+### `dtype`
+- Returns the data type of the array.
+
+### `shape`
+- Returns the shape of the array as a list of dimensions.
+  
+### `size`
+- Returns the total number of elements in the array.
+
+### `ndim`
+- Returns the number of dimensions of the array.
+
+### `T`
+- Transposed version of the array.
+
+### `F`
+- Flattened version of the array.
+
+---
+
+## **Element Access and Manipulation**
+
+### **Indexing and Slicing**
+You can access and modify elements using regular Python-style indexing.
+
+- **Get item**:
+  ```python
+  a = array([[1, 2], [3, 4]])
+  print(a[0, 1])  # Output: 2
+  ```
+
+- **Set item**:
+  ```python
+  a[1, 0] = 5
+  ```
+
+---
+
+## **Mathematical Operations**
+
+You can perform element-wise operations between arrays or scalars.
+
+### **Addition**
+```python
+array1 + array2
 ```
 
-## Array Class
-
-### Class Definition
-
+### **Subtraction**
 ```python
-class array:
+array1 - array2
 ```
 
-### Initialization
-
+### **Multiplication**
 ```python
-def __init__(self, *data: Union[List["array"], list, int, float], dtype: Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']] = None) -> None
+array1 * array2
 ```
 
-Initializes an array with the given data and optional data type.
-
-**Parameters:**
-- `data`: The data for the array. It can be a list of integers, floats, or other arrays.
-- `dtype`: The data type of the array elements (e.g., 'int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64').
-
-### Representation
-
+### **Matrix Multiplication**
 ```python
-def __repr__(self) -> str
+array1 @ array2
 ```
 
-Returns a string representation of the array.
-
-### Indexing
-
+### **Power**
 ```python
-def __getitem__(self, idx: int)
-def __setattr__(self, name: str, value: Any) -> None
-def __setitem__(self, index: tuple, value: Any) -> None
-def __iter__(self) -> Iterator
-```
-
-Supports getting and setting elements using indexing.
-
-### Data Type Conversion
-
-```python
-def _convert_dtype(self, data: List["array"], dtype: Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']])
-def astype(self, dtype: Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']])
-```
-
-Converts the data type of the array elements.
-
-### List Conversion
-
-```python
-def tolist(self) -> list
-```
-
-Converts the array to a list.
-
-### Copy
-
-```python
-def copy(self) -> List["array"]
-```
-
-Returns a deep copy of the array.
-
-### View
-
-```python
-def view(self, dtype: Optional[Literal['int8', 'int16', 'int32', 'int64', 'float16', 'float32', 'float64']] = None) -> List["array"]
-```
-
-Returns a view of the array with an optional data type.
-
-### Shape and Size
-
-```python
-def shape(self) -> list:
-def flatten(self) -> list:
-def numel(self) -> int:
-def size(self) -> tuple:
-```
-
-Returns the shape, flattened data, number of elements, and size of the array.
-
-### Transpose and Reshape
-
-```python
-def T(self):
-def transpose(self, dim0: int, dim1: int):
-def reshape(self, new_shape: tuple) -> List["array"]:
-```
-
-Transposes and reshapes the array.
-
-### Mathematical Operations
-
-```python
-def __add__(self, other: List["array"]) -> List["array"]:
-def __mul__(self, other: List["array"]) -> List["array"]:
-def __matmul__(self, other: List["array"]) -> List["array"]:
-def __pow__(self, exp: float) -> List["array"]:
-def __neg__(self) -> List["array"]:
-def __sub__(self, other: List["array"]) -> List["array"]:
-def __rsub__(self, other: List["array"]) -> List["array"]:
-def __rmul__(self, other: List["array"]) -> List["array"]:
-def __truediv__(self, other: List["array"]) -> List["array"]:
-def rtruediv(self, other: List["array"]) -> List["array"]:
-```
-
-Performs element-wise addition, multiplication, matrix multiplication, power, negation, subtraction, and division.
-
-### Summation and Broadcasting
-
-```python
-def sum(self, axis: int = None, keepdim: bool = False) -> List["array"]:
-def broadcast(self, other: List["array"]) -> List["array"]:
-```
-
-Calculates the sum along a specified axis and performs broadcasting with another array.
-
-### Activation Functions
-
-```python
-def relu(self) -> List["array"]:
-def tanh(self) -> List["array"]:
-def sigmoid(self) -> List["array"]:
-def gelu(self) -> List["array"]:
-```
-
-Applies activation functions (ReLU, tanh, sigmoid, GELU) to the array elements.
-
-## Utility Functions
-
-```python
-import random
-
-def zeros(shape)
-def ones(shape)
-def randint(low, high, size=None, dtype=int)
-def arange(start, end, step)
-def randn(domain=(1, -1), shape=None)
-def zeros_like(arr, dtype=int)
-def ones_like(arr, dtype=int)
-```
-
-Provides functions for creating arrays with zeros, ones, random integers, ranges, random values, and arrays like other arrays.
-
-### Functions
-
-#### `zeros(shape)`
-
-Creates an array of zeros with the given shape.
-
-**Parameters:**
-- `shape`: A tuple specifying the shape of the array.
-
-**Usage:**
-
-```python
-zeros((2, 3))
-```
-
-#### `ones(shape)`
-
-Creates an array of ones with the given shape.
-
-**Parameters:**
-- `shape`: A tuple specifying the shape of the array.
-
-**Usage:**
-
-```python
-ones((2, 3))
-```
-
-#### `randint(low, high, size=None, dtype=int)`
-
-Generates random integers between `low` and `high`.
-
-**Parameters:**
-- `low`: The lower bound of the random integers.
-- `high`: The upper bound of the random integers.
-- `size`: The number of random integers to generate.
-- `dtype`: The data type of the random integers.
-
-**Usage:**
-
-```python
-randint(0, 10, size=5)
-```
-
-#### `arange(start, end, step)`
-
-Creates an array with values ranging from `start` to `end` with the given `step`.
-
-**Parameters:**
-- `start`: The start value.
-- `end`: The end value.
-- `step`: The step size.
-
-**Usage:**
-
-```python
-arange(0, 10, 1)
-```
-
-#### `randn(domain=(1, -1), shape=None)`
-
-Generates random values within the specified domain and shape.
-
-**Parameters:**
-- `domain`: A tuple specifying the range of random values.
-- `shape`: The shape of the array.
-
-**Usage:**
-
-```python
-randn(domain=(0, 1), shape=(2, 3))
-```
-
-#### `zeros_like(arr, dtype=int)`
-
-Creates an array of zeros with the same shape as the given array.
-
-**Parameters:**
-- `arr`: The array to copy the shape from.
-- `dtype`: The data type of the new array.
-
-**Usage:**
-
-```python
-zeros_like([[1, 2], [3, 4]])
-```
-
-#### `ones_like(arr, dtype=int)`
-
-Creates an array of ones with the same shape as the given array.
-
-**Parameters:**
-- `arr`: The array to copy the shape from.
-- `dtype`: The data type of the new array.
-
-**Usage:**
-
-```python
-ones_like([[1, 2], [3, 4]])
-```
-
-## Array Class Methods
-
-### Addition
-
-```python
-def __add__(self, other: List["array"]) -> List["array"]
-```
-
-Performs element-wise addition with another array.
-
-**Parameters:**
-- `other`: The other array to add.
-
-**Usage:**
-
-```python
-a = array([1, 2, 3])
-b = array([4, 5, 6])
-c = a + b
-print(c)
-# Output: array([5, 7, 9], dtype=int64)
-```
-
-### Multiplication
-
-```python
-def __mul__(self, other: List["array"]) -> List["array"]
-```
-
-Performs element-wise multiplication with another array.
-
-**Parameters:**
-- `other`: The other array to multiply.
-
-**Usage:**
-
-```python
-a = array([1, 2, 3])
-b = array([4, 5, 6])
-c = a * b
-print(c)
-# Output: array([4, 10, 18], dtype=int64)
-```
-
-### Matrix Multiplication
-
-```python
-def __matmul__(self, other: List["array"]) -> List["array"]
-```
-
-Performs matrix multiplication with another array.
-
-**Parameters:**
-- `other`: The other array to matrix multiply.
-
-**Usage:**
-
-```python
-a = array([[1, 2], [3, 4]])
-b = array([[5, 6], [7, 8]])
-c = a @ b
-print(c)
-# Output: array([[19, 22], [43, 50]], dtype=int64)
-```
-
-### Power
-
-```python
-def __pow__(self, exp: float) -> List["array"]
-```
-
-Raises each element in the array to the power of `exp`.
-
-**Parameters:**
-- `exp`: The exponent.
-
-**Usage:**
-
-```python
-a = array([1, 2, 3])
-b = a ** 2
-print(b)
-# Output: array([1, 4, 9], dtype=int64)
-```
-
-### Negation
-
-```python
-def __neg__(self) -> List["array"]
-```
-
-Negates each element in the array.
-
-**Usage:**
-
-```python
-a = array([1, 2, 3])
-b = -a
-print(b)
-# Output: array([-1, -2, -3], dtype=int64)
-```
-
-### Subtraction
-
-```python
-def __sub__(self, other: List["array"]) -> List["array"]
-```
-
-Performs element-wise subtraction with another array.
-
-**Parameters:**
-- `other`: The other array to subtract.
-
-**Usage:**
-
-```python
-a = array([4, 5, 6])
-b = array([1, 2, 3])
-c = a - b
-print(c)
-# Output: array([3, 3, 3], dtype=int64)
-```
-
-### Right Subtraction
-
-```python
-def __rsub__(self, other: List["array"]) -> List["array"]
-```
-
-Performs element-wise right subtraction with another array.
-
-**Parameters:**
-- `other`: The other array to subtract from.
-
-**Usage:**
-
-```python
-a = array([1, 2, 3])
-b = array([4, 5, 6])
-c = b - a
-print(c)
-# Output: array([3, 3, 3], dtype=int64)
-```
-
-### Right Multiplication
-
-```python
-def __rmul__(self, other: List["array"]) -> List["array"]
-```
-
-Performs element-wise right multiplication with another array.
-
-**Parameters:**
-- `other`: The other array to multiply.
-
-**Usage:**
-
-```python
-a = array([1, 2, 3])
-b = array([4, 5, 6])
-c = b * a
-print(c)
-# Output: array([4, 10, 18], dtype=int64)
-```
-
-### True Division
-
-```python
-def __truediv__(self, other: List["array"]) -> List["array"]
-```
-
-Performs element-wise division with another array.
-
-**Parameters:**
-- `other`: The other array to divide by.
-
-**Usage:**
-
-```python
-a = array([4, 6, 8])
-b = array([2, 3, 4])
-c = a / b
-print(c)
-# Output: array([2.0, 2.0, 2.0], dtype=int64)
-```
-
-### Right True Division
-
-```python
-def rtruediv(self, other: List["array"]) -> List["array"]
-```
-
-Performs element-wise right division with another array.
-
-**Parameters:**
-- `other`: The other array to divide.
-
-**Usage:**
-
-```python
-a = array([2, 3, 4])
-b = array([4, 6, 8])
-c = b / a
-print(c)
-# Output: array([2.0, 2.0, 2.0], dtype=int64)
-```
-
-### Summation
-
-```python
-def sum(self, axis: int = None, keepdim: bool = False) -> List["array"]
-```
-
-Calculates the sum along a specified axis.
-
-**Parameters:**
-- `axis`: The axis to sum along. If None, sums all elements.
-- `keepdim`: If True, retains reduced dimensions as dimensions with size one.
-
-**Usage:**
-
-```python
-a = array([[1, 2], [3, 4]])
-b = a.sum(axis=0)
-print(b)
-# Output: array([4, 6], dtype=int64)
-```
-
-### Broadcasting
-
-```python
-def broadcast(self, other: List["array"]) -> List["array"]
-```
-
-Broadcasts the given array to the shape of the current array.
-
-**Parameters:**
-- `other`: The other array to broadcast.
-
-**Usage:**
-
-```python
-a = array([[1, 2], [3, 4]])
-b = array([1, 2])
-c = a.broadcast(b)
-print(c)
-# Output: array([[1, 2], [1, 2]], dtype=int64)
-```
-
-### ReLU Activation
-
-```python
-def relu(self) -> List["array"]
-```
-
-Applies the ReLU (Rectified Linear Unit) function element-wise.
-
-**Usage:**
-
-```python
-a = array([-1, 2, -3, 4])
-b = a.relu()
-print(b)
-# Output: array([0, 2, 0, 4], dtype=int64)
-```
-
-### Tanh Activation
-
-```python
-def tanh(self) -> List["array"]
-```
-
-Applies the tanh function element-wise.
-
-**Usage:**
-
-```python
-a = array([-1, 0, 1])
-b = a.tanh()
-print(b)
-# Output: array([-0.7615941559557649, 0.0, 0.7615941559557649], dtype=int64)
-```
-
-### Sigmoid Activation
-
-```python
-def sigmoid(self) -> List["array"]
-```
-
-Applies the sigmoid function element-wise.
-
-**Usage:**
-
-```python
-a = array([-1, 0, 1])
-b = a.sigmoid()
-print(b)
-# Output: array([0.2689414213699951, 0.5, 0.7310585786300049], dtype=int64)
-```
-
-### GELU Activation
-
-```python
-def gelu(self) -> List["array"]
-```
-
-Applies the GELU (Gaussian Error Linear Unit) function element-wise.
-
-**Usage:**
-
-```python
-a = array([-1, 0, 1])
-b = a.gelu()
-print(b)
-# Output: array([-0.15865525393145707, 0.0, 0.8413447460685429], dtype=int64)
+array1 ** 2
 ```
 
 ---
 
-This documentation provides detailed descriptions and examples for each method in the `array` class. For more information on the implementation details, please refer to the source code.
+## **Mathematical Functions**
+
+The array class supports a wide range of mathematical operations.
+
+### **Common Functions**
+- `exp()`: Exponential of each element.
+- `log()`: Logarithm of each element.
+- `relu()`, `tanh()`, `sigmoid()`: Activation functions used in neural networks.
+- `mean(axis=None, keepdims=False)`: Mean of the array elements.
+- `sum(axis=None, keepdims=False)`: Sum of the array elements.
+- `std(axis=None, ddof=0, keepdims=False)`: Standard deviation of the array elements.
+
+### **Example**:
+```python
+a = array([1, 2, 3])
+a.exp()  # Returns exponential values of the elements
+```
+
+---
+
+## **Array Manipulation**
+
+### **Reshape**
+```python
+a.reshape(new_shape)
+```
+- **Example**:
+  ```python
+  a = array([1, 2, 3, 4])
+  a = a.reshape((2, 2))  # Reshapes to 2x2
+  ```
+
+### **Transpose**
+```python
+a.T
+```
+
+### **Flatten**
+```python
+a.flatten()
+```
+
+### **Unsqueeze and Squeeze**
+- `unsqueeze(dim)`: Adds a dimension at the given index.
+- `squeeze(dim)`: Removes dimensions of size 1 at the given index.
+
+---
+
+## **Broadcasting**
+Broadcasting allows for arrays of different shapes to be compatible for element-wise operations. Use the `broadcast` method to achieve this.
+
+```python
+a.broadcast(other)
+```
+
+---
+
+## **Utilities**
+
+### **Copying**
+You can create a deep copy of the array using the `copy` method.
+```python
+a_copy = a.copy()
+```
+
+### **Conversion**
+The `as_type()` method allows for converting the array’s elements to a specified data type.
+```python
+a.as_type("float32")
+```
+
+---
+
+## **Binary Operations**
+
+#### **`__add__(self, other)`**
+- **Description**: Adds two arrays element-wise. If shapes are incompatible, it attempts broadcasting.
+- **Arguments**: 
+  - `other (array or list)`: Array or list to be added.
+- **Returns**: A new `array` object with the result of element-wise addition.
+- **Raises**: `ValueError` if shapes are incompatible and cannot be broadcasted.
+
+#### **`__mul__(self, other)`**
+- **Description**: Multiplies two arrays element-wise. If shapes are incompatible, it attempts broadcasting.
+- **Arguments**: 
+  - `other (array or list)`: Array or list to be multiplied.
+- **Returns**: A new `array` object with the result of element-wise multiplication.
+- **Raises**: `ValueError` if shapes are incompatible.
+
+#### **`__matmul__(self, other)`**
+- **Description**: Performs matrix multiplication between two arrays.
+- **Arguments**:
+  - `other (array)`: Another array for matrix multiplication.
+- **Returns**: A new `array` object resulting from matrix multiplication.
+
+#### **`__sub__(self, other)`**
+- **Description**: Subtracts two arrays element-wise. If shapes are incompatible, it attempts broadcasting.
+- **Arguments**:
+  - `other (array or list)`: Array or list to be subtracted.
+- **Returns**: A new `array` object with the result of element-wise subtraction.
+- **Raises**: `ValueError` if shapes are incompatible and cannot be broadcasted.
+
+#### **`__neg__(self)`**
+- **Description**: Negates all elements in the array.
+- **Arguments**: None.
+- **Returns**: A new `array` object with negated values.
+
+#### **`__pow__(self, pow, eps=1e6)`**
+- **Description**: Raises every element of the array to the power `pow`. Uses `eps` to handle zero values.
+- **Arguments**:
+  - `pow (int or float)`: The exponent to which each element will be raised.
+  - `eps (float, optional)`: Epsilon value to avoid zero division, default is `1e6`.
+- **Returns**: A new `array` object with the result of element-wise exponentiation.
+
+#### **`__truediv__(self, other)`**
+- **Description**: Divides two arrays element-wise.
+- **Arguments**:
+  - `other (array or list)`: The divisor array or list.
+- **Returns**: A new `array` object representing the element-wise division.
+
+#### **`__rtruediv__(self, other)`**
+- **Description**: Reversed true division for `other / self`.
+- **Arguments**:
+  - `other (array or list)`: The numerator array or list.
+- **Returns**: A new `array` object representing the element-wise reversed division.
+
+---
+
+### **Mathematical Functions**
+
+#### **`exp(self)`**
+- **Description**: Applies the exponential function element-wise.
+- **Arguments**: None.
+- **Returns**: A new `array` object with the result of element-wise exponential calculation.
+
+#### **`log(self)`**
+- **Description**: Computes the natural logarithm element-wise.
+- **Arguments**: None.
+- **Returns**: A new `array` object with the logarithmic values.
+- **Raises**: `ValueError` if any element is non-positive.
+
+#### **`relu(self)`**
+- **Description**: Applies the Rectified Linear Unit (ReLU) function element-wise.
+- **Arguments**: None.
+- **Returns**: A new `array` object after applying ReLU activation.
+
+#### **`relu_derivative(self)`**
+- **Description**: Computes the derivative of the ReLU function element-wise.
+- **Arguments**: None.
+- **Returns**: A new `array` object with the derivatives of the ReLU function.
+
+#### **`tanh(self)`**
+- **Description**: Applies the hyperbolic tangent function element-wise.
+- **Arguments**: None.
+- **Returns**: A new `array` object after applying the `tanh` activation.
+
+#### **`tanh_derivative(self)`**
+- **Description**: Computes the derivative of the hyperbolic tangent function element-wise.
+- **Arguments**: None.
+- **Returns**: A new `array` object with the derivatives of `tanh`.
+
+#### **`sigmoid(self)`**
+- **Description**: Applies the sigmoid activation function element-wise.
+- **Arguments**: None.
+- **Returns**: A new `array` object with sigmoid-activated values.
+
+#### **`sigmoid_derivative(self)`**
+- **Description**: Computes the derivative of the sigmoid activation function element-wise.
+- **Arguments**: None.
+- **Returns**: A new `array` object with the derivatives of the sigmoid function.
+
+#### **`gelu(self)`**
+- **Description**: Applies the Gaussian Error Linear Unit (GELU) function element-wise.
+- **Arguments**: None.
+- **Returns**: A new `array` object after applying GELU activation.
+
+#### **`gelu_derivative(self)`**
+- **Description**: Computes the derivative of the GELU function element-wise.
+- **Arguments**: None.
+- **Returns**: A new `array` object with the derivatives of the GELU function.
+
+#### **`silu(self)`**
+- **Description**: Applies the Sigmoid Linear Unit (SiLU) function element-wise.
+- **Arguments**: None.
+- **Returns**: A new `array` object after applying SiLU activation.
+
+#### **`silu_derivative(self)`**
+- **Description**: Computes the derivative of the SiLU function element-wise.
+- **Arguments**: None.
+- **Returns**: A new `array` object with the derivatives of the SiLU function.
+
+---
+
+### **Statistical Functions**
+
+#### **`mean(self, axis=None, keepdims=False)`**
+- **Description**: Computes the mean of the array along the specified axis.
+- **Arguments**:
+  - `axis (int, optional)`: Axis along which the mean is computed.
+  - `keepdims (bool, optional)`: If `True`, retains reduced dimensions as 1.
+- **Returns**: A new `array` object with the mean values.
+
+#### **`var(self, axis=None, ddof=0, keepdims=False)`**
+- **Description**: Computes the variance of the array along the specified axis.
+- **Arguments**:
+  - `axis (int, optional)`: Axis along which variance is computed.
+  - `ddof (int, optional)`: Delta Degrees of Freedom.
+  - `keepdims (bool, optional)`: If `True`, retains reduced dimensions as 1.
+- **Returns**: A new `array` object with the variance values.
+
+#### **`std(self, axis=None, ddof=0, keepdims=False)`**
+- **Description**: Computes the standard deviation of the array along the specified axis.
+- **Arguments**:
+  - `axis (int, optional)`: Axis along which standard deviation is computed.
+  - `ddof (int, optional)`: Delta Degrees of Freedom.
+  - `keepdims (bool, optional)`: If `True`, retains reduced dimensions as 1.
+- **Returns**: A new `array` object with the standard deviation values.
+
+#### **`sum(self, axis=None, keepdims=False)`**
+- **Description**: Computes the sum of the array along the specified axis.
+- **Arguments**:
+  - `axis (int, optional)`: Axis along which the sum is computed.
+  - `keepdims (bool, optional)`: If `True`, retains reduced dimensions as 1.
+- **Returns**: A new `array` object with the summed values.
+
+---
+
+### **Linear Algebra**
+
+#### **`dot(self, other)`**
+- **Description**: Computes the dot product of two arrays.
+- **Arguments**:
+  - `other (array)`: The other array for the dot product.
+- **Returns**: A new `array` object with the result of the dot product.
+
+#### **`det(self)`**
+- **Description**: Computes the determinant of the array (must be 2D).
+- **Arguments**: None.
+- **Returns**: A new `array` object with the determinant value.
+
+---
