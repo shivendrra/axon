@@ -1,5 +1,5 @@
 import torch
-from axon import value
+from axon.micro import value
 
 def test_sanity_check():
 
