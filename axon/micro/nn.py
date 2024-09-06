@@ -1,4 +1,4 @@
-from .base import value
+from .base import scalar
 import pickle
 import random
 
@@ -27,8 +27,8 @@ class Module:
 
 class Neuron(Module):
   def __init__(self, _in, nonlin=True):
-    self.wei = [value(random.uniform(-1, 1)) for _ in range(_in)]
-    self.b = value(0)
+    self.wei = [scalar(random.uniform(-1, 1)) for _ in range(_in)]
+    self.b = scalar(0)
     self.nonlin = nonlin
   
   def __call__(self, x):
@@ -81,8 +81,8 @@ class RNNCell(Module):
     self.input_neuron = Neuron(input_size, nonlin=False)
     self.hidden_neuron = Neuron(hidden_size, nonlin=False)
     self.nonlin = nonlin
-    self.input_neuron.b = value(0.1)
-    self.hidden_neuron.b = value(0.1)
+    self.input_neuron.b = scalar(0.1)
+    self.hidden_neuron.b = scalar(0.1)
 
   def __call__(self, x, h):
     wx = sum((wi * xi for wi, xi in zip(self.input_neuron.wei, x)), self.input_neuron.b)
@@ -106,7 +106,7 @@ class RNN(Module):
 
   def __call__(self, x, h=None):
     if h is None:
-      h = [value(0) for _ in range(self.hidden_size)]
+      h = [scalar(0) for _ in range(self.hidden_size)]
     for rnn_cell in self.rnn_cells:
       h = [rnn_cell(x, h)]
     return self.output_layer(h)
