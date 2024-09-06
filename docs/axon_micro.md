@@ -1,16 +1,16 @@
 # **axon.micro**
 
-## **Class `value`**
+## **Class `scalar`**
 
-The `value` class provides an abstraction for handling numerical values with support for gradients, arithmetic operations, and various activation functions. It acts as a wrapper around `engine.Value` and allows seamless integration of gradient-based computations.
+The `scalar` class provides an abstraction for handling numerical values with support for gradients, arithmetic operations, and various activation functions. It acts as a wrapper around `scalar.cpp` and allows seamless integration of gradient-based computations.
 
 ### **Constructor:**
 - **`__init__(self, data)`**:
-  - **data**: The initial value for this object. It can be a numeric value or an instance of `engine.Value`.
+  - **data**: The initial value for this object. It can be a numeric value or an instance of `scalar`.
 
 ### **Properties:**
 - **`data`**:
-  - **Getter**: Returns the current value of the `value` object.
+  - **Getter**: Returns the current value of the `scalar` object.
   - **Setter**: Updates the value with `new_data`.
 - **`grad`**:
   - **Getter**: Returns the gradient of the value.
@@ -18,11 +18,11 @@ The `value` class provides an abstraction for handling numerical values with sup
 
 ### **Arithmetic Operations:**
 - **`__add__(self, other)`**:
-  - Adds `self` and `other`. `other` can be a `value` instance or a numeric value.
+  - Adds `self` and `other`. `other` can be a `scalar` instance or a numeric value.
 - **`__radd__(self, other)`**:
   - Handles right addition when `self` is on the right-hand side of the `+` operator.
 - **`__mul__(self, other)`**:
-  - Multiplies `self` and `other`. `other` can be a `value` instance or a numeric value.
+  - Multiplies `self` and `other`. `other` can be a `scalar` instance or a numeric value.
 - **`__rmul__(self, other)`**:
   - Handles right multiplication when `self` is on the right-hand side of the `*` operator.
 - **`__pow__(self, exp)`**:
@@ -30,11 +30,11 @@ The `value` class provides an abstraction for handling numerical values with sup
 - **`__neg__(self)`**:
   - Negates `self`.
 - **`__sub__(self, other)`**:
-  - Subtracts `other` from `self`. `other` can be a `value` instance or a numeric value.
+  - Subtracts `other` from `self`. `other` can be a `scalar` instance or a numeric value.
 - **`__rsub__(self, other)`**:
   - Handles right subtraction when `self` is on the right-hand side of the `-` operator.
 - **`__truediv__(self, other)`**:
-  - Divides `self` by `other`. `other` can be a `value` instance or a numeric value.
+  - Divides `self` by `other`. `other` can be a `scalar` instance or a numeric value.
 - **`__rtruediv__(self, other)`**:
   - Handles right division when `self` is on the right-hand side of the `/` operator.
 
@@ -65,11 +65,11 @@ The `value` class provides an abstraction for handling numerical values with sup
 ### **Example Usage:**
 
 ```python
-import engine
+from axon.micro import scalar
 
 # Create value instances
-a = value(5.0)
-b = value(3.0)
+a = scalar(5.0)
+b = scalar(3.0)
 
 # Perform arithmetic operations
 c = a + b

@@ -1,4 +1,4 @@
-from axon.micro import value, nn
+from axon.micro import nn
 
 xs = [
   [2.0, 3.0, -1.0],

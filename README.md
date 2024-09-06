@@ -25,6 +25,14 @@ git clone https://github.com/shivendrra/axon.git
 cd axon
 ```
 
+or
+
+Install via pip:
+
+```bash
+pip install axon-pypi
+```
+
 ## Usage
 
 You can use this similar to micrograd to build a simple neural network or do scalar level backprop.
