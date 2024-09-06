@@ -1,8 +1,6 @@
-from setuptools import setup, find_packages, Extension
-from setuptools.command.build_ext import build_ext as _build_ext
+from setuptools import setup, find_packages
 import os
 import codecs
-import pybind11
 
 current_dir = os.path.abspath(os.path.dirname(__file__))
 
@@ -11,20 +9,10 @@ with codecs.open(os.path.join(current_dir, "README.md"), encoding="utf-8") as fi
 
 VERSION = '1.0.0'
 DESCRIPTION = 'Multi-dimensional array creation & manipulation library like numpy written from scratch in python along with a scalar level autograd engine written in C/C++ with python wrapper'
+lib_path = os.path.join(current_dir, 'axon', 'micro', 'libscalar.so')
 
-class build_ext(_build_ext):
-  def build_extensions(self):
-    super().build_extensions()
-
-# Define the C++ extension
-ext_modules = [
-  Extension(
-    name='axon.micro.csrc.engine',
-    sources=['axon/micro/csrc/engine.cpp'],
-    include_dirs=['axon/micro/csrc'],
-    language='c++'
-  ),
-]
+if not os.path.exists(lib_path):
+  raise FileNotFoundError(f"Shared library {lib_path} not found. Please compile the C++ code to generate libscalar.so")
 
 setup(
   name="axon-pypi",
@@ -53,14 +41,12 @@ setup(
     "Operating System :: Linux/Unix",
     "License :: OSI Approved :: MIT License",
   ],
-  ext_modules=ext_modules,
-  cmdclass={'build_ext': build_ext},
+  package_data={
+    'axon.micro': ['libscalar.so'],
+  },
   entry_points={
     'console_scripts': [
       'axon=axon.__main__:main',
     ],
-  },
-  install_requires=[
-    'pybind11>=2.10.0',
-  ],
+  }
 )

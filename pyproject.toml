@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=42", "wheel"]
+requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -9,20 +9,23 @@ description = "Multi-dimensional array creation & manipulation library like nump
 readme = "README.md"
 license = {text = "MIT"}
 authors = [{name = "shivendra", email = "shivharsh44@gmail.com"}]
+dependencies = []
 classifiers = [
-    "Development Status :: 1 - Production/Stable",
-    "Intended Audience :: Developers",
-    "Intended Audience :: Hobbyist/Enthusiasts",
-    "Intended Audience :: Builders from Scratch",
-    "Programming Language :: C",
-    "Programming Language :: C++",
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Operating System :: Windows",
-    "Operating System :: MacOS",
-    "Operating System :: Linux/Unix",
-    "License :: OSI Approved :: MIT License",
+  "Development Status :: 1 - Production/Stable",
+  "Intended Audience :: Developers",
+  "Programming Language :: C",
+  "Programming Language :: C++",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Operating System :: OS Independent",
+  "License :: OSI Approved :: MIT License",
 ]
+
+[tool.setuptools]
+packages = ["axon", "axon.micro"]
+
+[tool.setuptools.package-data]
+"axon.micro" = ["libscalar.so"]

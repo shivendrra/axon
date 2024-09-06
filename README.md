@@ -73,10 +73,10 @@ anyway, prefer documentation for detailed usage guide:
 #### Axon.micro
 ```python
 
-from axon.micro import value
+from axon.micro import scalar
 
-a = value(2)
-b = value(3)
+a = scalar(2)
+b = scalar(3)
 
 c = a + b
 d = a * b
