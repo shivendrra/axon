@@ -7,7 +7,7 @@ current_dir = os.path.abspath(os.path.dirname(__file__))
 with codecs.open(os.path.join(current_dir, "README.md"), encoding="utf-8") as file:
   long_description = file.read()
 
-VERSION = '1.0.1'
+VERSION = '1.0.2'
 DESCRIPTION = 'Multi-dimensional array creation & manipulation library like numpy written from scratch in python along with a scalar level autograd engine written in C/C++ with python wrapper'
 lib_path = os.path.join(current_dir, 'axon', 'micro', 'libscalar.so')
 
@@ -23,7 +23,7 @@ setup(
   long_description=long_description,
   long_description_content_type="text/markdown",
   license="MIT",
-  packages=find_packages(),
+  packages=find_packages(include=['axon', 'axon.*']),
   classifiers=[
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
@@ -35,8 +35,10 @@ setup(
     "License :: OSI Approved :: MIT License",
   ],
   package_data={
-    'axon.micro': ['libscalar.so'],
+    'axon.micro': ['libscalar.so', '*.h', '*.cpp'],
+    'axon': ['dtypes/*.py', 'helpers/*.py']
   },
+  include_package_data=True,
   entry_points={
     'console_scripts': [
       'axon=axon.__main__:main',
