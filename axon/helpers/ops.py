@@ -111,7 +111,7 @@ def compute_norm(data, p: int = 2):
 
 def dedup(x): return list(dict.fromkeys(x))
 
-def stack(data, axis: int=0) -> list:
+def _stack(data, axis: int=0) -> list:
   if not data:
     raise ValueError("Need atleast one tensor to stack")
 
@@ -143,7 +143,7 @@ def stack(data, axis: int=0) -> list:
   insert_data(new_data, data, axis)
   return new_data
 
-def concat(data, axis) -> list:
+def _concat(data, axis) -> list:
   if not data:
     raise ValueError("Need atleast one tensor to stack")
   
@@ -200,7 +200,7 @@ def matmul(A, B):
   
   return matmul_2d(A, B)
 
-def conv2d(input_data, kernel_data, stride):
+def _conv2d(input_data, kernel_data, stride):
   input_h, input_w = len(input_data), len(input_data[0])
   kernel_h, kernel_w = len(kernel_data), len(kernel_data[0])
   output_h, output_w = (input_h - kernel_h) // stride + 1, (input_w - kernel_w) // stride + 1
@@ -214,7 +214,7 @@ def conv2d(input_data, kernel_data, stride):
           )
   return output
 
-def apply_padding(input_data, padding):
+def _apply_padding(input_data, padding):
   if padding == 0:
     return input_data
   padded_shape = (len(input_data) + 2 * padding, len(input_data[0]) + 2 * padding)

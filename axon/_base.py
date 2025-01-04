@@ -1,36 +1,33 @@
+"""
+  @_base.py Main array class
+  @breif Code contains axon.array class to perform array manipulation
+  @comments
+  - conjusted to save total lines of code
+  - has basic functions & operations same almost same as that in numpy
+  - entrypoint to whole axon.array class & functions
+"""
+
 from typing import *
-from .dtypes.convert import handle_conversion
-from .helpers.shape import *
-from .helpers.functional import *
-from .helpers.ops import *
-from .utils._contigous import ContiguousOps
 from copy import deepcopy
 import math
 
-int8 = "int8"
-int16 = "int16"
-int32 = "int32"
-int64 = "int64"
-long = "long"
-float16 = "float16"
-float32 = "float32"
-float64 = "float64"
-double = "double"
+from .dtypes.convert import handle_conversion
+from .utils._contigous import ContiguousOps
+from .helpers.shape import *
+from .helpers.functional import *
+from .helpers.ops import *
+
+int8, int16, int32, int64, long = "int8", "int16", "int32", "int64", "long"
+float16, float32, float64, double = "float16", "float32", "float64", "double"
 
 class array:
-  int8 = int8
-  int16 = int16
-  int32 = int32
-  int64 = int64 or long
-  float16 = float16
-  float32 = float32
-  float64 = float64 or double
-
+  int8, int16, int32, int64, long, float16, float32, float64, double = int8, int16, int32, int64, long, float16, float32, float64, double
   def __init__(self, *data:Union[List["array"], list, int, float], dtype:Optional[Literal["int8", "int16", "int32", "int64", "float16", "float32", "float64"]]=None) -> None:
     self.data = data[0] if len(data) == 1 and isinstance(data[0], list) else list(data)
     self.shape = self.shape()
     self.dtype = array.int32 if dtype is None else dtype
     self.size, self.ndim, self.strides = get_size(self.shape), len(self.shape), get_strides(self.shape)
+    self.contiguous_ops = ContiguousOps(self)
     if dtype is not None:
       self.data = handle_conversion(self.data, dtype)
 
@@ -179,7 +176,6 @@ class array:
     if self.size == other.size:
       return array(_add(self.data, other.data), dtype=self.dtype)
     else:
-      print(self.size, other.size)
       raise ValueError("shapes are incompatible for operation")
 
   def __mul__(self, other:List["array"]) -> List["array"]:
@@ -357,6 +353,38 @@ class array:
         return [_apply(sub_data) for sub_data in data]
       else:
         return silu_derivative(data)
+    return array(_apply(self.data), dtype=array.float32)
+  
+  def sin(self) -> List["array"]:
+    def _apply(data):
+      if isinstance(data, list):
+        return [_apply(sub_data) for sub_data in data]
+      else:
+        return math.sin(data)
+    return array(_apply(self.data), dtype=array.float32)
+
+  def cos(self) -> List["array"]:
+    def _apply(data):
+      if isinstance(data, list):
+        return [_apply(sub_data) for sub_data in data]
+      else:
+        return math.cos(data)
+    return array(_apply(self.data), dtype=array.float32)
+
+  def sinh(self) -> List["array"]:
+    def _apply(data):
+      if isinstance(data, list):
+        return [_apply(sub_data) for sub_data in data]
+      else:
+        return math.sinh(data)
+    return array(_apply(self.data), dtype=array.float32)
+
+  def cosh(self) -> List["array"]:
+    def _apply(data):
+      if isinstance(data, list):
+        return [_apply(sub_data) for sub_data in data]
+      else:
+        return math.cosh(data)
     return array(_apply(self.data), dtype=array.float32)
 
   def broadcast(self, other:List["array"]) -> List["array"]:
