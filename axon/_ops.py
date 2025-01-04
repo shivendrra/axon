@@ -1,6 +1,6 @@
 from .base import array
 from .helpers.utils import _zeros
-from .helpers.shapes import squeeze, unsqueeze, get_shape
+from .helpers.shape import squeeze, unsqueeze, get_shape
 from typing import *
 
 def matmul(a:Union[array, list], b:Union[array, list]) -> array:

@@ -1,8 +1,9 @@
 from typing import *
 from .dtypes.convert import handle_conversion
-from .helpers.shapes import *
+from .helpers.shape import *
 from .helpers.functional import *
 from .helpers.ops import *
+from .utils._contigous import ContiguousOps
 from copy import deepcopy
 import math
 
@@ -29,6 +30,7 @@ class array:
     self.data = data[0] if len(data) == 1 and isinstance(data[0], list) else list(data)
     self.shape = self.shape()
     self.dtype = array.int32 if dtype is None else dtype
+    self.size, self.ndim, self.strides = get_size(self.shape), len(self.shape), get_strides(self.shape)
     if dtype is not None:
       self.data = handle_conversion(self.data, dtype)
 
@@ -107,15 +109,18 @@ class array:
   def shape(self) -> list:
     return get_shape(self.data)
   
-  def numel(self) -> int:
-    out = 1
-    for dim in self.shape:
-      out *= dim
-    return out
-  
   def transpose(self) -> List["array"]:
     out = array(transpose(self.data), dtype=self.dtype)
     return out
+
+  def is_contiguous(self) -> bool:
+    return self.contiguous_ops.is_contiguous()
+  
+  def make_contiguous(self) -> None:
+    self.contiguous_ops.make_contiguous()
+  
+  def compute_stride(self, shape: List[int]) -> List[int]:
+    return self.contiguous_ops.compute_stride(shape)
 
   @property
   def F(self) -> List["array"]:
@@ -124,14 +129,6 @@ class array:
   @property
   def T(self) -> List["array"]:
     return array(transpose(self.data), dtype=self.dtype)
-  
-  @property
-  def size(self) -> tuple:
-    return tuple(get_shape(self.data))
-  
-  @property
-  def ndim(self) -> int:
-    return len(get_shape(self.data))
 
   def flatten(self, start_dim:int=0, end_dim:int=-1) -> List["array"]:
     return array(flatten_recursive(self.data, start_dim, end_dim), dtype=self.dtype)
