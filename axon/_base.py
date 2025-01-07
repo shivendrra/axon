@@ -130,10 +130,10 @@ class array:
   def flatten(self, start_dim:int=0, end_dim:int=-1) -> List["array"]:
     return array(flatten_recursive(self.data, start_dim, end_dim), dtype=self.dtype)
 
-  def swap_axes(self, axis1:int, axis2:int) -> List["array"]:
+  def swapaxes(self, axis1:int, axis2:int) -> List["array"]:
     axis1 = self.ndim + axis1 if axis1 < 0 else axis1
     axis2 = self.ndim + axis2 if axis2 < 0 else axis2
-    return array( swap_axes(self.data, axis1, axis2), dtype=self.dtype)
+    return array(swap_axes(self.data, axis1, axis2), dtype=self.dtype)
 
   def unsqueeze(self, dim:int=0):
     dim = dim if dim > 0 else self.ndim + dim
@@ -385,6 +385,22 @@ class array:
         return [_apply(sub_data) for sub_data in data]
       else:
         return math.cosh(data)
+    return array(_apply(self.data), dtype=array.float32)
+  
+  def sqrt(self) -> List["array"]:
+    def _apply(data):
+      if isinstance(data, list):
+        return [_apply(sub_data) for sub_data in data]
+      else:
+        return math.sqrt(data)
+    return array(_apply(self.data), dtype=array.float32)
+
+  def rsqrt(self) -> List["array"]:
+    def _apply(data):
+      if isinstance(data, list):
+        return [_apply(sub_data) for sub_data in data]
+      else:
+        return 1.0 / math.sqrt(data)
     return array(_apply(self.data), dtype=array.float32)
 
   def broadcast(self, other:List["array"]) -> List["array"]:

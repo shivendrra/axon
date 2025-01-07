@@ -5,3 +5,4 @@ from .utils._random import random, RNG
 from .utils._tqdm import tqdm, trange
 
 random = random(seed=200)
+RNG = RNG(seed=300)
