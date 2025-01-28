@@ -7,7 +7,7 @@ current_dir = os.path.abspath(os.path.dirname(__file__))
 with codecs.open(os.path.join(current_dir, "README.md"), encoding="utf-8") as file:
   long_description = file.read()
 
-VERSION = '1.0.3'
+VERSION = '1.0.4'
 DESCRIPTION = 'Multi-dimensional array creation & manipulation library like numpy written from scratch in python along with a scalar level autograd engine written in C/C++ with python wrapper'
 lib_path = os.path.join(current_dir, 'axon', 'micro', 'libscalar.so')
 
