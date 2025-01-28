@@ -67,10 +67,10 @@ from axon import array
 
 class MLP:
   def __init__(self, _in, _hid, _out, bias=False) -> None:
-    self.w1 = array(axon.randn(shape=(_hid, _in)), dtype=axon.float32)
-    self.b1 = array(axon.zeros(shape=(_hid, 1)))
-    self.w2 = array(axon.randn(shape=(_out, _hid)), dtype=axon.float32)
-    self.b2 = array(axon.zeros(shape=(_out, 1)))
+    self.w1 = array(axon.random.randn(_hid, _in), dtype=axon.float32)
+    self.b1 = array(axon.zeros(_hid, 1))
+    self.w2 = array(axon.random.randn(_out, _hid), dtype=axon.float32)
+    self.b2 = array(axon.zeros(_out, 1))
   
   def forward(self, x):
     self.Z1 = axon.dot(self.w1, x) + self.b1
@@ -87,6 +87,8 @@ class MLP:
     db2 = axon.sum(dz2, axis=1, keepdims=True) * (1 / m)
     
     da1 = axon.dot(self.w2.T, dz2)
+    print(da1, da1.shape)
+    print(self.A1, self.A1.shape)
     dz1 = da1 * self.A1.sigmoid_derivative()
     dw1 = axon.dot(dz1, X.T) * (1 / m)
     db1 = axon.sum(dz1, axis=1, keepdims=True) * (1 / m)
@@ -109,7 +111,7 @@ class MLP:
     loss = ((Y - output) ** 2 / m).sum()
     return loss
 
-X = array(axon.randn(shape=(2, 100)), dtype='float32')
+X = array(axon.random.randn(2, 100), dtype='float32')
 Y = (axon.sum(X, axis=0).reshape((1, 100)))
 
 mlp = MLP(2, 10, 1)

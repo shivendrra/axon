@@ -1,34 +1,33 @@
+"""
+  @_base.py Main array class
+  @breif Code contains axon.array class to perform array manipulation
+  @comments
+  - conjusted to save total lines of code
+  - has basic functions & operations same almost same as that in numpy
+  - entrypoint to whole axon.array class & functions
+"""
+
 from typing import *
-from .dtypes.convert import handle_conversion
-from .helpers.shapes import *
-from .helpers.functional import *
-from .helpers.ops import *
 from copy import deepcopy
 import math
 
-int8 = "int8"
-int16 = "int16"
-int32 = "int32"
-int64 = "int64"
-long = "long"
-float16 = "float16"
-float32 = "float32"
-float64 = "float64"
-double = "double"
+from .dtypes.convert import handle_conversion
+from .utils._contigous import ContiguousOps
+from .helpers.shape import *
+from .helpers.functional import *
+from .helpers.ops import *
+
+int8, int16, int32, int64, long = "int8", "int16", "int32", "int64", "long"
+float16, float32, float64, double = "float16", "float32", "float64", "double"
 
 class array:
-  int8 = int8
-  int16 = int16
-  int32 = int32
-  int64 = int64 or long
-  float16 = float16
-  float32 = float32
-  float64 = float64 or double
-
+  int8, int16, int32, int64, long, float16, float32, float64, double = int8, int16, int32, int64, long, float16, float32, float64, double
   def __init__(self, *data:Union[List["array"], list, int, float], dtype:Optional[Literal["int8", "int16", "int32", "int64", "float16", "float32", "float64"]]=None) -> None:
     self.data = data[0] if len(data) == 1 and isinstance(data[0], list) else list(data)
     self.shape = self.shape()
     self.dtype = array.int32 if dtype is None else dtype
+    self.size, self.ndim, self.strides = get_size(self.shape), len(self.shape), get_strides(self.shape)
+    self.contiguous_ops = ContiguousOps(self)
     if dtype is not None:
       self.data = handle_conversion(self.data, dtype)
 
@@ -107,15 +106,18 @@ class array:
   def shape(self) -> list:
     return get_shape(self.data)
   
-  def numel(self) -> int:
-    out = 1
-    for dim in self.shape:
-      out *= dim
-    return out
-  
   def transpose(self) -> List["array"]:
     out = array(transpose(self.data), dtype=self.dtype)
     return out
+
+  def is_contiguous(self) -> bool:
+    return self.contiguous_ops.is_contiguous()
+  
+  def make_contiguous(self) -> None:
+    self.contiguous_ops.make_contiguous()
+  
+  def compute_stride(self, shape: List[int]) -> List[int]:
+    return self.contiguous_ops.compute_stride(shape)
 
   @property
   def F(self) -> List["array"]:
@@ -124,22 +126,14 @@ class array:
   @property
   def T(self) -> List["array"]:
     return array(transpose(self.data), dtype=self.dtype)
-  
-  @property
-  def size(self) -> tuple:
-    return tuple(get_shape(self.data))
-  
-  @property
-  def ndim(self) -> int:
-    return len(get_shape(self.data))
 
   def flatten(self, start_dim:int=0, end_dim:int=-1) -> List["array"]:
     return array(flatten_recursive(self.data, start_dim, end_dim), dtype=self.dtype)
 
-  def swap_axes(self, axis1:int, axis2:int) -> List["array"]:
+  def swapaxes(self, axis1:int, axis2:int) -> List["array"]:
     axis1 = self.ndim + axis1 if axis1 < 0 else axis1
     axis2 = self.ndim + axis2 if axis2 < 0 else axis2
-    return array( swap_axes(self.data, axis1, axis2), dtype=self.dtype)
+    return array(swap_axes(self.data, axis1, axis2), dtype=self.dtype)
 
   def unsqueeze(self, dim:int=0):
     dim = dim if dim > 0 else self.ndim + dim
@@ -182,7 +176,6 @@ class array:
     if self.size == other.size:
       return array(_add(self.data, other.data), dtype=self.dtype)
     else:
-      print(self.size, other.size)
       raise ValueError("shapes are incompatible for operation")
 
   def __mul__(self, other:List["array"]) -> List["array"]:
@@ -360,6 +353,54 @@ class array:
         return [_apply(sub_data) for sub_data in data]
       else:
         return silu_derivative(data)
+    return array(_apply(self.data), dtype=array.float32)
+  
+  def sin(self) -> List["array"]:
+    def _apply(data):
+      if isinstance(data, list):
+        return [_apply(sub_data) for sub_data in data]
+      else:
+        return math.sin(data)
+    return array(_apply(self.data), dtype=array.float32)
+
+  def cos(self) -> List["array"]:
+    def _apply(data):
+      if isinstance(data, list):
+        return [_apply(sub_data) for sub_data in data]
+      else:
+        return math.cos(data)
+    return array(_apply(self.data), dtype=array.float32)
+
+  def sinh(self) -> List["array"]:
+    def _apply(data):
+      if isinstance(data, list):
+        return [_apply(sub_data) for sub_data in data]
+      else:
+        return math.sinh(data)
+    return array(_apply(self.data), dtype=array.float32)
+
+  def cosh(self) -> List["array"]:
+    def _apply(data):
+      if isinstance(data, list):
+        return [_apply(sub_data) for sub_data in data]
+      else:
+        return math.cosh(data)
+    return array(_apply(self.data), dtype=array.float32)
+  
+  def sqrt(self) -> List["array"]:
+    def _apply(data):
+      if isinstance(data, list):
+        return [_apply(sub_data) for sub_data in data]
+      else:
+        return math.sqrt(data)
+    return array(_apply(self.data), dtype=array.float32)
+
+  def rsqrt(self) -> List["array"]:
+    def _apply(data):
+      if isinstance(data, list):
+        return [_apply(sub_data) for sub_data in data]
+      else:
+        return 1.0 / math.sqrt(data)
     return array(_apply(self.data), dtype=array.float32)
 
   def broadcast(self, other:List["array"]) -> List["array"]:
