@@ -78,12 +78,15 @@ rnn.train(inputs, targets, iters=100, learning_rate=0.001)
 import axon
 from axon import array
 
+import axon
+from axon import array
+
 class RNN:
   def __init__(self, _in, _hidden, _out) -> None:
     self.hidden_size = _hidden
-    self.Wxh = array(axon.randn(shape=(_hidden, _in)), dtype=axon.float32)
-    self.Whh = array(axon.randn(shape=(_hidden, _hidden)), dtype=axon.float32)
-    self.Why = array(axon.randn(shape=(_out, _hidden)), dtype=axon.float32)
+    self.Wxh = array(axon.random.randn(_hidden, _in), dtype=axon.float32)
+    self.Whh = array(axon.random.randn(_hidden, _hidden), dtype=axon.float32)
+    self.Why = array(axon.random.randn(_out, _hidden), dtype=axon.float32)
     self.bh = array(axon.zeros((_hidden, 1)), dtype=axon.float32)
     self.by = array(axon.zeros((_out, 1)), dtype=axon.float32)
   
@@ -92,7 +95,7 @@ class RNN:
     self.last_hs = { -1: h_prev }
     
     for t, x in enumerate(input):
-      x = axon.array(x).reshape((-1, 1))
+      x = array(x).unsqueeze().T
       h_prev = (axon.dot(self.Wxh, x) + axon.dot(self.Whh, h_prev) + self.bh).tanh()
       self.last_hs[t] = h_prev
     
@@ -143,8 +146,8 @@ class RNN:
   def cal_loss(self, y, targets):
     return axon.mean((y-targets) ** 2)
 
-inputs = axon.randn(shape=(5, 10))
-targets = [axon.randint(0, 2, size=(2)) for _ in range(10)]
+inputs = axon.random.randn(5, 10)
+targets = [axon.random.randint(0, 2, 2) for _ in range(10)]
 
 rnn = RNN(_in=5, _hidden=10, _out=2)
 rnn.train(inputs, targets, iters=100, lr=0.001)
